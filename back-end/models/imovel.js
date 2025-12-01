@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
+        autoIncrement: true,
       },
       regras_convivencia: DataTypes.STRING,
       publico: DataTypes.STRING,
@@ -33,9 +34,10 @@ module.exports = (sequelize, DataTypes) => {
 
   Imovel.associate = function (models) {
     //isso é para quando tenho uma tela que necessita de informações de outra tela. Como não tenho uma tela específica para tipo, não insiro ele aqui
-    Imovel.belongsTo(models.Cadastro, {
+    Imovel.belongsTo(models.Locador, {
       foreignKey: "locador_cpf",
-      sourceKey: "cpf",
+      targetKey: "cpf",
+      //sourceKey: "cpf",
     });
   };
 

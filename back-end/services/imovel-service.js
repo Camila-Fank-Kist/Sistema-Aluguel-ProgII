@@ -1,5 +1,4 @@
 const imovelRepository = require("../repositories/imovel-repository");
-//const umRepository = require("../repositories/um-repository");
 
 // Função para retornar todos os imóveis
 const retornaTodosImoveis = async (req, res) => {
@@ -25,7 +24,8 @@ const criarImovel = async (req, res) => {
     endereco_pais,
     endereco_cep,
     endereco_complemento,
-    tipo_imovel,
+    id_tipo,
+    locador_cpf,
     nome_imovel,
   } = req.body;
   console.log({
@@ -39,7 +39,8 @@ const criarImovel = async (req, res) => {
     endereco_pais,
     endereco_cep,
     endereco_complemento,
-    tipo_imovel,
+    id_tipo,
+    locador_cpf,
     nome_imovel,
   });
   try {
@@ -54,7 +55,8 @@ const criarImovel = async (req, res) => {
       !endereco_pais ||
       !endereco_cep ||
       !endereco_complemento ||
-      !tipo_imovel ||
+      !id_tipo ||
+      !locador_cpf ||
       !nome_imovel
     ) {
       return res
@@ -73,7 +75,8 @@ const criarImovel = async (req, res) => {
       endereco_pais,
       endereco_cep,
       endereco_complemento,
-      tipo_imovel,
+      id_tipo,
+      locador_cpf,
       nome_imovel,
     });
     res.status(201).json(imovel);
@@ -85,6 +88,7 @@ const criarImovel = async (req, res) => {
 
 // Função para atualizar um imóvel
 const atualizaImovel = async (req, res) => {
+  const id = parseInt(req.params.id); //fica no endereço
   const {
     regras_convivencia,
     publico,
@@ -96,10 +100,10 @@ const atualizaImovel = async (req, res) => {
     endereco_pais,
     endereco_cep,
     endereco_complemento,
-    tipo_imovel,
+    id_tipo,
+    locador_cpf,
     nome_imovel,
   } = req.body;
-  const id = parseInt(req.params.id);
   try {
     const imovelAtualizado = await imovelRepository.atualizarImovel({
       id,
@@ -113,7 +117,8 @@ const atualizaImovel = async (req, res) => {
       endereco_pais,
       endereco_cep,
       endereco_complemento,
-      tipo_imovel,
+      id_tipo,
+      locador_cpf,
       nome_imovel,
     });
 
@@ -133,19 +138,7 @@ const deletaImovel = async (req, res) => {
   try {
     const id = parseInt(req.params.id); //fica no endereço
 
-    // Primeiro devo deletar a(s) unidades de moradia que pertencem ao imóvel
-    const todasUM_do_imovel = await umRepository.obterUMPorIdImovel(id); //Camila, aqui voce pode trocar pelo nome que você colocou na UM
-
-    //Deletando todos as unidades de moradia do imóvel
-    for (const um of todasUM_do_imovel) {
-      //Camila, aqui voce pode trocar pelo nome que você colocou na UM
-      await umRepository.deletarUM({
-        //Camila, aqui voce pode trocar pelo nome que você colocou na UM
-        id_imovel: id,
-        id_um: um.id, //Camila, aqui voce pode trocar pelo nome que você colocou na UM
-      });
-    }
-    //Depois deleto o imóvel
+    //Deletando o imóvel (considerando que ele não possui unidades de moradia)
     const imovelRemovido = await imovelRepository.deletarImovel({ id });
 
     if (imovelRemovido) {
@@ -171,6 +164,7 @@ const retornaImovelPorId = async (req, res) => {
     });
 
     if (imovel) {
+      //adicionar se existe alguma unidade de moradia associada, depois que a Camila mexer com a UM
       res.status(200).json(imovel);
     } else {
       res.status(404).json({ message: "Imóvel não encontrado." });

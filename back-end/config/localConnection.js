@@ -8,9 +8,9 @@ Sequelize.useCLS(transactionNamespace);
 const sequelize = new Sequelize({
   host: "localhost",
   port: "5432",
-  database: "progII-TF", //usei assim no meu notbook
+  database: "progII_TF", //usei assim no meu notbook
   username: "postgres", //usei assim no meu notbook
-  password: "0000", //padrão no computador da UFFS
+  password: "0000", //é a senha do postgres no meu not, mas pode mudar
   schema: "public",
   dialect: "postgres",
   freezeTableName: false,

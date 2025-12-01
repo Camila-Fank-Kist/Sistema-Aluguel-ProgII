@@ -1,31 +1,27 @@
---Criação da tabela Usuario
-CREATE TABLE Usuario (
-    cpf VARCHAR PRIMARY KEY,
-    data_nascimento DATE,
-    nome_usuario VARCHAR,
-    Senha VARCHAR
-);
-
 --Criação da tabela Locador
 -- locador_cpf = chave estrangeira e primária
 CREATE TABLE Locador (
-    locador_cpf VARCHAR PRIMARY KEY, 
-    FOREIGN KEY (locador_cpf) REFERENCES Usuario (cpf)
+    cpf VARCHAR PRIMARY KEY,
+    data_nascimento DATE,
+    nome_usuario VARCHAR,
+    senha VARCHAR
 );
 
 --Criação da tabela Inquilino
 -- inquilino_cpf = chave estrangeira e primária
 CREATE TABLE Inquilino (
-    inquilino_cpf VARCHAR PRIMARY KEY,
+    cpf VARCHAR PRIMARY KEY,
+    data_nascimento DATE,
+    nome_usuario VARCHAR,
+    senha VARCHAR,
     estuda BOOLEAN,
     trabalha BOOLEAN,
-    genero VARCHAR,
-    FOREIGN KEY (inquilino_cpf) REFERENCES Usuario (cpf)
+    genero VARCHAR
 );
 
 --Criação da tabela Imovel
 CREATE TABLE Imovel (
-    id_imovel SERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     nome_imovel VARCHAR,
     locador_cpf VARCHAR,
     regras_convivencia VARCHAR,
@@ -65,23 +61,6 @@ CREATE TABLE Categoria_um (
     id_categoria_um SERIAL PRIMARY KEY
 );
 
---Criação da tabela Despesa
-CREATE TABLE Despesa (
-    id_despesa SERIAL PRIMARY KEY,
-    preco DECIMAL(10, 2),
-    descricao VARCHAR,
-    pontual BOOLEAN,
-    id_imovel INTEGER,
-    id_categoria INTEGER,
-    id_pagamento INTEGER,
-    data DATE
-);
-
---Criação da tabela Categoria (da despesa)
-CREATE TABLE Categoria (
-    id_categoria SERIAL PRIMARY KEY,
-    nome_categoria VARCHAR
-);
 
 --Criação da tabela Imagens
 CREATE TABLE Imagens (
@@ -101,43 +80,13 @@ CREATE TABLE Contrato (
     inquilino_cpf VARCHAR
 );
 
---Criação da tabela Pagamento
-CREATE TABLE Pagamento (
-    id_pagamento SERIAL PRIMARY KEY,
-    ano_referencia INTEGER,
-    mes_referencia VARCHAR,
-    data_pagamento DATE,
-    pdf VARCHAR,
-    pago BOOLEAN,
-    id_contrato INTEGER
-);
 
---Criação da tabela Chat
-CREATE TABLE Chat (
-    id_chat SERIAL PRIMARY KEY,
-    nome_chat VARCHAR,
-    foto VARCHAR
-);
 
---Criação da tabela Mensagem
-CREATE TABLE Mensagem (
-    id_mensagem SERIAL PRIMARY KEY,
-    texto VARCHAR,
-    id_chat INTEGER,
-    cpf_usuario_autor VARCHAR,
-    data_mensagem DATE
-);
 
---Criação da tabela Usuario_chat
-CREATE TABLE Usuario_chat (
-    id_chat INTEGER,
-    cpf_usuario VARCHAR,
-    PRIMARY KEY (id_chat, cpf_usuario)
-);
  
 ALTER TABLE Imovel ADD CONSTRAINT fk_locador_cpf
     FOREIGN KEY (locador_cpf)
-    REFERENCES Locador (locador_cpf);
+    REFERENCES Locador (cpf);
 
 ALTER TABLE Imovel ADD CONSTRAINT fk_id_tipo
     FOREIGN KEY (id_tipo)
@@ -146,23 +95,12 @@ ALTER TABLE Imovel ADD CONSTRAINT fk_id_tipo
  
 ALTER TABLE Unidade_moradia ADD CONSTRAINT fk_id_imovel
     FOREIGN KEY (id_imovel)
-    REFERENCES Imovel (id_imovel);
+    REFERENCES Imovel (id);
 
 ALTER TABLE Unidade_moradia ADD CONSTRAINT fk_categoria_da_um
     FOREIGN KEY (id_categoria_um)
     REFERENCES Categoria_um (id_categoria_um);
  
-ALTER TABLE Despesa ADD CONSTRAINT fk_id_categoria
-    FOREIGN KEY (id_categoria)
-    REFERENCES Categoria (id_categoria);
-
-ALTER TABLE Despesa ADD CONSTRAINT fk_id_pagamento
-    FOREIGN KEY (id_pagamento)
-    REFERENCES Pagamento (id_pagamento);
-
-ALTER TABLE Despesa ADD CONSTRAINT fk_imovel
-    FOREIGN KEY (id_imovel)
-    REFERENCES Imovel (id_imovel);
  
 ALTER TABLE Imagens ADD CONSTRAINT fk_um
     FOREIGN KEY (id_um)
@@ -170,33 +108,15 @@ ALTER TABLE Imagens ADD CONSTRAINT fk_um
  
 ALTER TABLE Contrato ADD CONSTRAINT fk_inquilino
     FOREIGN KEY (inquilino_cpf)
-    REFERENCES Inquilino (inquilino_cpf);
+    REFERENCES Inquilino (cpf);
 
 ALTER TABLE Contrato ADD CONSTRAINT fk_um
     FOREIGN KEY (id_um)
     REFERENCES Unidade_moradia (id_um);
- 
-ALTER TABLE Pagamento ADD CONSTRAINT fk_contrato
-    FOREIGN KEY (id_contrato)
-    REFERENCES Contrato (id_contrato);
- 
-ALTER TABLE Mensagem ADD CONSTRAINT fk_chat
-    FOREIGN KEY (id_chat)
-    REFERENCES Chat (id_chat);
 
-ALTER TABLE Mensagem ADD CONSTRAINT fk_usuario_autor
-    FOREIGN KEY (cpf_usuario_autor)
-    REFERENCES Usuario (cpf);
- 
-ALTER TABLE Usuario_chat ADD CONSTRAINT fk_chat
-    FOREIGN KEY (id_chat)
-    REFERENCES Chat (id_chat);
+INSERT INTO Locador (cpf, data_nascimento, nome_usuario, senha) VALUES ('111.111.111-11', '10/10/1987','João da Silva', '1234'), ('222.222.222-22', '25/08/1964', 'Mariana Vieira', '5678');
 
-ALTER TABLE Usuario_chat ADD CONSTRAINT fk_usuario
-    FOREIGN KEY (cpf_usuario) 
-    REFERENCES Usuario (cpf);
-
-
+INSERT INTO Inquilino (cpf, data_nascimento, nome_usuario, senha, estuda, trabalha, genero) VALUES ('777.777.777-77', '18/05/2004', 'Lucas Silva Souza', 'senha', 'true', 'true', 'masculino');
 
 INSERT INTO Tipo (nome_tipo) VALUES
 ('Apartamento'),
@@ -205,5 +125,5 @@ INSERT INTO Tipo (nome_tipo) VALUES
 ('Casa');
 
 INSERT INTO Imovel (nome_imovel, locador_cpf, regras_convivencia, publico, endereco_rua, endereco_bairro, endereco_numero, endereco_cidade, endereco_estado, endereco_pais, id_tipo, endereco_cep, endereco_complemento) VALUES
-('Pensão das Flores', '11122233344', 'Não fumar. Não fazer barulho após as 22h.', 'Apenas mulheres', 'Rua das Flores', 'Centro', 100, 'Chapecó', 'SC', 'Brasil', 2, '89800-000', 'Perto da universidade'),
-('Edifício Central', '12312312312', 'Permitido animais de pequeno porte.', 'Todos', 'Avenida Principal', 'Efapi', 2020, 'Chapecó', 'SC', 'Brasil', 1, '89801-123', 'Bloco A');
+('Pensão das Flores', '111.111.111-11', 'Não fumar. Não fazer barulho após as 22h.', 'Apenas mulheres', 'Rua das Flores', 'Centro', 100, 'Chapecó', 'SC', 'Brasil', 2, '89800-000', 'Perto da universidade'),
+('Edifício Central', '222.222.222-22', 'Permitido animais de pequeno porte.', 'Todos', 'Avenida Principal', 'Efapi', 2020, 'Chapecó', 'SC', 'Brasil', 1, '89801-123', 'Bloco A');
