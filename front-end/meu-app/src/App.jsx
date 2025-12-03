@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
+import { Button, Grid, Stack, Box, Typography } from "@mui/material";
+import axios from "axios";
 import Login from "./Login";
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userCPF, setUserCPF] = useState("");
+  const [exibeLocador, setExibeLocador] = useState(false); //parei aqui
 
   useEffect(() => {
     // Verifica se há token no localStorage ao carregar
@@ -31,11 +34,11 @@ export default function App() {
     }
   }, [isLoggedIn, userCPF]);
 
-  const buscarPermissoesPorEmail = async (email) => {
+  const buscarPermissoesPorCPF = async (cpf) => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `http://localhost:3002/usuario_permissao/usuario/${email}`,
+        `http://localhost:3002/usuario_permissao/usuario/${cpf}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -100,4 +103,26 @@ export default function App() {
       </Box>
     );
   }
+  // Se estiver logado, mostra o conteúdo principal
+  return (
+    <Grid container spacing={2}>
+      <Grid size={12}>
+        <Stack spacing={2}>
+          <Stack spacing={2} direction="row" alignItems="center">
+            <Typography variant="h6" sx={{ flexGrow: 1 }}>
+              Usuário: {userCPF}
+            </Typography>
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={handleLogout}
+              style={{ width: "150px" }}
+            >
+              Logout
+            </Button>
+          </Stack>
+        </Stack>
+      </Grid>
+    </Grid>
+  );
 }

@@ -12,7 +12,7 @@ const retornaTodosInquilinos = async (req, res) => {
 };
 
 // Função para criar um novo inquilino
-const criarInquilino = async (req, res) => {
+const criarInquilinos = async (req, res) => {
   const { cpf, nome, data_nascimento, senha, genero, trabalha, estuda } =
     req.body;
   console.log({ cpf, nome, data_nascimento, senha, genero, trabalha, estuda });
@@ -23,8 +23,8 @@ const criarInquilino = async (req, res) => {
       !data_nascimento ||
       !senha ||
       !genero ||
-      !trabalha ||
-      !estuda
+      trabalha == null ||
+      estuda == null
     ) {
       return res
         .status(400)
@@ -47,4 +47,4 @@ const criarInquilino = async (req, res) => {
   }
 };
 
-module.exports = { retornaTodosInquilinos, criarInquilino };
+module.exports = { retornaTodosInquilinos, criarInquilinos };

@@ -2,16 +2,51 @@ const express = require("express");
 const cors = require("cors");
 
 const imovelRouter = require("./controllers/imovel-controller");
-const unidadeMoradiaRouter = require("./controllers/unidade-moradia-controller");
-const contratoRouter = require("./controllers/contrato-controller");
+const locadorRouter = require("./controllers/locador-controller");
+const inquilinoRouter = require("./controllers/inquilino-controller");
+const usuario_permissaoRouter = require("./controllers/usuario_permissao-controller");
+//const unidadeMoradiaRouter = require("./controllers/unidade-moradia-controller");
+//const contratoRouter = require("./controllers/contrato-controller");
+const permissaoRouter = require("./controllers/permissao-controller");
+const authRouter = require("./controllers/auth-controller");
+const authService = require("./services/auth-service");
+
+const session = require("express-session");
+const passport = require("passport");
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
+// Configurar express-session ANTES do passport.session()
+app.use(
+  session({
+    secret: "e_segredo",
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false }, // false para desenvolvimento (true requer HTTPS)
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Configurar estratégias do Passport
+authService.configureLocalStrategy();
+authService.configureJwtStrategy();
+authService.configureSerialization();
+
 const PORT = 3002;
 app.listen(PORT, () => console.log(`Servidor está rodando na porta ${PORT}.`));
 
+// Usar o router de autenticação
+app.use("/", authRouter);
+
 app.use("/imovel", imovelRouter);
-app.use("/unidade-moradia", unidadeMoradiaRouter);
-app.use("/contrato", contratoRouter);
+app.use("/locador", locadorRouter);
+app.use("/inquilino", inquilinoRouter);
+app.use("/usuario_permissao", usuario_permissaoRouter);
+app.use("/permissao", permissaoRouter);
+
+//app.use("/unidade-moradia", unidadeMoradiaRouter);
+//app.use("/contrato", contratoRouter);

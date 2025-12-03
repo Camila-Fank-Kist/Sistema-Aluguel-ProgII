@@ -9,11 +9,11 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
       },
       data_nascimento: DataTypes.STRING,
-      nome_usuario: DataTypes.STRING,
+      nome: DataTypes.STRING,
       senha: DataTypes.STRING,
       estuda: DataTypes.BOOLEAN,
       trabalha: DataTypes.BOOLEAN,
-      genero: DataTypes.BOOLEAN,
+      genero: DataTypes.STRING,
     },
     {
       sequelize,
