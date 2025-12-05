@@ -87,7 +87,7 @@ create table permissao
   PRIMARY KEY (id)
 );
 
-create table usuario_permissao_locador
+create table locador_permissao
 (
   cpf varchar NOT NULL,
   id_permissao bigint NOT NULL,
@@ -96,7 +96,7 @@ create table usuario_permissao_locador
   CONSTRAINT FK_usuario_permissao_permissao FOREIGN KEY (id_permissao) REFERENCES permissao (id)
 );
 
-create table usuario_permissao_inquilino
+create table inquilino_permissao
 (
   cpf varchar NOT NULL,
   id_permissao bigint NOT NULL,
@@ -158,6 +158,6 @@ INSERT INTO Imovel (nome_imovel, locador_cpf, regras_convivencia, publico, ender
 INSERT INTO permissao (id, descricao) VALUES (1, 'TELA_LOCADOR');
 INSERT INTO permissao (id, descricao) VALUES (2, 'TELA_INQUILINO') ;
 
-INSERT INTO usuario_permissao_locador (cpf, id_permissao) VALUES ('111.111.111-11', 1);
+INSERT INTO locador_permissao (cpf, id_permissao) VALUES ('111.111.111-11', 1);
 
-INSERT INTO usuario_permissao_inquilino (cpf, id_permissao) VALUES ('333.333.333-33', 2);
+INSERT INTO inquilino_permissao (cpf, id_permissao) VALUES ('333.333.333-33', 2);

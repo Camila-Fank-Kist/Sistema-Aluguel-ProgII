@@ -24,13 +24,13 @@ module.exports = (sequelize, DataTypes) => {
 
   Permissao.associate = function (models) {
     Permissao.belongsToMany(models.Locador, {
-      through: models.UsuarioPermissao,
+      through: models.LocadorPermissao,
       foreignKey: "id_permissao",
       otherKey: "cpf", //uso para entrada o cpf do usuário
     });
 
     Permissao.belongsToMany(models.Inquilino, {
-      through: models.UsuarioPermissao,
+      through: models.InquilinoPermissao,
       foreignKey: "id_permissao",
       otherKey: "cpf", //uso para entrada o cpf do usuário
     });

@@ -1,3 +1,4 @@
+//auth fará o gerenciamento em login, as ações para quem é o usuário (vai para tela locador ou vai para tela inquilino)
 const express = require("express");
 const passport = require("passport");
 const authService = require("../services/auth-service");
@@ -12,7 +13,11 @@ authRouter.post(
     // Cria o token JWT
     const token = authService.gerarToken(req.body.username);
 
-    res.json({ message: "Login successful", token: token });
+    res.json({
+      message: "Login successful",
+      token: token,
+      tipo_usuario: response.user.tipo_usuario,
+    });
   }
 );
 
@@ -29,11 +34,7 @@ authRouter.post("/logout", function (req, res, next) {
 // POST /novoUsuario - Criar novo usuário
 authRouter.post("/novoUsuario", async (req, res) => {
   try {
-    await authService.criarNovoUsuario({
-      username: req.body.username,
-      passwd: req.body.passwd,
-      //nome: req.body.nome,
-    });
+    await authService.criarNovoUsuario(req.body);
     console.log("Usuário inserido");
     res.sendStatus(200);
   } catch (error) {

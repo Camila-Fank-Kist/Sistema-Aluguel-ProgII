@@ -1,16 +1,16 @@
 "use strict";
 
 module.exports = (sequelize, DataTypes) => {
-  const UsuarioPermissao = sequelize.define(
-    "UsuarioPermissao",
+  const InquilinoPermissao = sequelize.define(
+    "InquilinoPermissao",
     {
-      cpf_usuario: {
+      cpf: {
         type: DataTypes.STRING,
         primaryKey: true,
-        /*references: {
-          model: "usuario",
-          key: "email",
-        },*/
+        references: {
+          model: "inquilino",
+          key: "cpf",
+        },
       },
       id_permissao: {
         type: DataTypes.BIGINT,
@@ -23,28 +23,25 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      tableName: "usuario_permissao",
+      tableName: "inquilino_permissao",
       schema: "public",
       freezeTableName: true,
       timestamps: false,
     }
   );
 
-  UsuarioPermissao.associate = function (models) {
-    UsuarioPermissao.belongsTo(models.Locador, {
-      foreignKey: "cpf_usuario",
+  InquilinoPermissao.associate = function (models) {
+    InquilinoPermissao.belongsTo(models.Inquilino, {
+      foreignKey: "cpf",
       targetKey: "cpf",
     });
-    UsuarioPermissao.belongsTo(models.Inquilino, {
-      foreignKey: "cpf_usuario",
-      targetKey: "cpf",
-    });
-    UsuarioPermissao.belongsTo(models.Permissao, {
+
+    InquilinoPermissao.belongsTo(models.Permissao, {
       foreignKey: "id_permissao",
       targetKey: "id",
       as: "Permissao",
     });
   };
 
-  return UsuarioPermissao;
+  return InquilinoPermissao;
 };
