@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     "Inquilino",
     {
       cpf: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         primaryKey: true,
       },
       data_nascimento: DataTypes.STRING,

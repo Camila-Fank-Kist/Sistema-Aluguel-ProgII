@@ -47,7 +47,13 @@ function InsercaoImovel({
 }) {
   const navigate = useNavigate();
   return (
-    <form>
+    <form
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "16px",
+      }}
+    >
       <TextField
         label="Nome do Imóvel"
         fullWidth

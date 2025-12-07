@@ -8,6 +8,7 @@ const unidadeRouter = express.Router();
 
 // ROTAS ESPECÍFICAS POR USUÁRIO (get das unidades para locador e publico geral, que não é autenticado):
 // GET /unidade-moradia/locador - listar unidades do locador
+<<<<<<< HEAD
 unidadeRouter.get(
   "/locador",
   authService.requireJWTAuth,
@@ -19,6 +20,11 @@ unidadeRouter.get(
   "/publico-geral",
   unidadeService.listaTodasAsUnidadesPublicoGeral
 );
+=======
+unidadeRouter.get("/locador", authService.requireJWTAuth, unidadeService.listaUnidadesLocador);
+// GET /unidade-moradia/publico-geral - listar unidades para o público geral
+unidadeRouter.get("/publico-geral", unidadeService.listaTodasAsUnidadesPublicoGeral);
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
 // FILTROS (que vão ser passados como parâmetros (query param?)): disponivel (true/false), id_imovel????????, id_categoria_um, nome_um (como fazer para aparecer se for parcialmente igual?)
 
 // GET /unidade-moradia/:id - Detalhe da unidade
@@ -30,6 +36,7 @@ unidadeRouter.get("/:id", unidadeService.retornaUnidadePorId);
 // -- rotas só para o locador autenticado --
 
 // POST /unidade-moradia - Criar nova unidade
+<<<<<<< HEAD
 unidadeRouter.post(
   "/",
   authService.requireJWTAuth,
@@ -81,3 +88,27 @@ unidadeRouter.get(
 );
 
 module.exports = unidadeRouter;
+=======
+unidadeRouter.post("/", authService.requireJWTAuth, unidadeService.criaUnidade);
+
+// POST /unidade-moradia/:id/upload-foto - Upload de foto/galeria
+// é assim que faz upload de foto???
+unidadeRouter.post("/:id/upload-foto", authService.requireJWTAuth, unidadeService.uploadFoto);
+
+// PUT /unidade-moradia/:id - Atualizar unidade
+unidadeRouter.put("/:id", authService.requireJWTAuth, unidadeService.atualizaUnidade);
+// obs. não permitir alterar o campo "disponivel" aqui
+
+// PATCH /unidade-moradia/:id/disponivel - Mudar disponibilidade da unidade
+unidadeRouter.patch("/:id/disponivel", authService.requireJWTAuth, unidadeService.mudaDisponibilidade);
+// obs.: só vai ser possível mudar a disponibilidade da unidade se não tiver um contrato ativo associado a ela
+
+// DELETE /unidade-moradia/:id - Remover unidade
+unidadeRouter.delete("/:id", authService.requireJWTAuth, unidadeService.deletaUnidade);
+
+// GET /unidade-moradia/:id/contratos - listar contratos da unidade (incluir ativos e não ativos)
+unidadeRouter.get("/:id/contratos", authService.requireJWTAuth, unidadeService.listaContratosDaUnidade);
+
+
+module.exports = unidadeRouter;
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d

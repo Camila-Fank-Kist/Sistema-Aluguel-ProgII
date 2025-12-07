@@ -7,7 +7,11 @@ const imovelRepository = require("../repositories/imovel-repository");
 // daí o express pega tudo depois do ?, separa pelo símbolo "&" e cria o objeto req.query.
 // obs.: os valores em req.query são sempre strings
 
+<<<<<<< HEAD
 // :) aprovado para locador (lista as unidades dele) e inquilino (FALTA impedir que ele acesse a rota, mas a lista volta vazia mesmo com ele acessando a rota)
+=======
+// :)
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
 const listaUnidadesLocador = async (req, res) => {
   try {
     const locador_cpf = req.user.cpf; // pegando o cpf do locador autenticado
@@ -15,7 +19,11 @@ const listaUnidadesLocador = async (req, res) => {
     const filtros = {}; // objeto para armazenar os filtros => inicia vazio
 
     if (req.query.disponivel) {
+<<<<<<< HEAD
       filtros.disponivel = req.query.disponivel === "true" ? true : false;
+=======
+      filtros.disponivel = (req.query.disponivel === 'true') ? true : false;
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
     }
     if (req.query.id_imovel) {
       filtros.id_imovel = parseInt(req.query.id_imovel);
@@ -27,22 +35,34 @@ const listaUnidadesLocador = async (req, res) => {
     //   filtros.nome_um = req.query.nome_um;
     // }
 
+<<<<<<< HEAD
     const unidades_locador = await unidadeRepository.listarUnidadesDoLocador(
       locador_cpf,
       filtros,
       req.query.nome_um
     );
+=======
+    const unidades_locador = await unidadeRepository.listarUnidadesDoLocador(locador_cpf, filtros, req.query.nome_um);
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
     // se tentar passar uma variavel que não existe, passa undefined
     // se tentat passar um objeto vazio, passa {}
 
     return res.status(200).json(unidades_locador);
+<<<<<<< HEAD
+=======
+    
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
   } catch (error) {
     console.error("Erro ao listar unidades do locador:", error);
     return res.sendStatus(500);
   }
 };
 
+<<<<<<< HEAD
 // :) aprovado para locador
+=======
+// :)
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
 // tinha pensado em fazer para aparecer só as unidades disponíveis para o inquilino, mas daí pensei que fosse mais legal deixar as unidades não disponíveis desabilitadas no front
 const listaTodasAsUnidadesPublicoGeral = async (req, res) => {
   try {
@@ -51,7 +71,11 @@ const listaTodasAsUnidadesPublicoGeral = async (req, res) => {
     const filtros_imovel = {};
 
     if (req.query.disponivel) {
+<<<<<<< HEAD
       filtros_um.disponivel = req.query.disponivel === "true" ? true : false;
+=======
+      filtros_um.disponivel = (req.query.disponivel === 'true') ? true : false;
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
     }
     if (req.query.id_categoria_um) {
       filtros_um.id_categoria_um = parseInt(req.query.id_categoria_um);
@@ -74,6 +98,7 @@ const listaTodasAsUnidadesPublicoGeral = async (req, res) => {
       filtros_imovel.publico = req.query.publico;
     }
 
+<<<<<<< HEAD
     const unidades = await unidadeRepository.listarTodasAsUnidadesPublicoGeral(
       filtros_um,
       intervalo_preco_um,
@@ -82,13 +107,24 @@ const listaTodasAsUnidadesPublicoGeral = async (req, res) => {
     );
 
     return res.status(200).json(unidades);
+=======
+    const unidades = await unidadeRepository.listarTodasAsUnidadesPublicoGeral(filtros_um, intervalo_preco_um, req.query.nome_um, filtros_imovel);
+
+    return res.status(200).json(unidades);
+    
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
   } catch (error) {
     console.error("Erro ao listar todas as unidades:", error);
     return res.sendStatus(500);
   }
 };
 
+<<<<<<< HEAD
 // :) aprovado para locador
+=======
+
+// :)
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
 // (NÃO): obs.: tratar para só retornar a unidade de moradia se ela pertencer ao locador ou inquilino autenticado. Se ela existir mas não pertencer a ele, retornar 404 e uma mensagem "Unidade não encontrada dentre suas unidades."
 // na real acho que não, pois essa rota pode ser usada pelo público geral também, para ver detalhes de uma unidade. daí o que muda é no front, que se o usuário for um locador autenticado, ele vê mais detalhes (botões de editar, excluir, etc.), e se for público geral, vê só os detalhes básicos.
 const retornaUnidadePorId = async (req, res) => {
@@ -96,16 +132,24 @@ const retornaUnidadePorId = async (req, res) => {
     const id = parseInt(req.params.id);
     const unidade = await unidadeRepository.obterUnidadePorId(id);
     if (unidade) {
+<<<<<<< HEAD
       res.status(200).json(unidade);
     } else {
       res.status(404).json({ message: "Unidade de moradia não encontrada." });
     }
+=======
+			res.status(200).json(unidade);
+		} else {
+			res.status(404).json({ message: "Unidade de moradia não encontrada." });
+		}
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
   } catch (error) {
     console.error("Erro ao buscar unidade de moradia:", error);
     res.sendStatus(500);
   }
 };
 
+<<<<<<< HEAD
 // :) aprovado para locador
 // :) obs1.: garantir que a unidade criada pertença a um imóvel que exista e que sejs do locador autenticado
 // obs2.: deve ser permitido o usuário selecionar o imóvel, mas também deve ser possível pegar automaticamente o imóvel, se for criar uma unidade a partir de um imóvel. Mas daí acho que basta enviar o id_imovel no body mesmo, pra usar essa mesma rota
@@ -131,10 +175,25 @@ const criaUnidade = async (req, res) => {
           message:
             "Nome da unidade, preço do aluguel e imóvel são obrigatórios.",
         }); // ok agora
+=======
+// :)
+// :) obs1.: garantir que a unidade criada pertença a um imóvel que exista e que sejs do locador autenticado
+// obs2.: deve ser permitido o usuário selecionar o imóvel, mas também deve ser possível pegar automaticamente o imóvel, se for criar uma unidade a partir de um imóvel. Mas daí acho que basta enviar o id_imovel no body mesmo, pra usar essa mesma rota
+// extras:
+  // :) não permitir preço negativo
+  // :) verificar se id_categoria_um existe
+const criaUnidade = async (req, res) => {
+  try {
+    const { nome_um, preco_aluguel, descricao, id_imovel, id_categoria_um, completo } = req.body; // não passamos "disponivel" no body pq ao criar uma unidade, ela sempre começa como disponível
+    
+    if (!nome_um || preco_aluguel === undefined || !id_imovel) { // caso o preço seja 0
+      return res.status(400).json({ message: "Nome da unidade, preço do aluguel e imóvel são obrigatórios." });
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
     }
 
     // verificando se o preço é negativo
     if (preco_aluguel < 0) {
+<<<<<<< HEAD
       return res
         .status(400)
         .json({ message: "O preço do aluguel não pode ser negativo" }); // ok
@@ -177,12 +236,50 @@ const criaUnidade = async (req, res) => {
   } catch (error) {
     console.error("Erro ao criar unidade:", error.message);
     console.error("Stack:", error.stack);
+=======
+      return res.status(400).json({ message: 'O preço do aluguel não pode ser negativo' });
+    }
+
+    const imovel = await imovelRepository.obterImovelPorId(id_imovel);
+    // verificando se o imóvel existe:
+    if (!imovel) {
+      return res.status(404).json({ message: 'Imóvel não encontrado' });
+    }
+    // verificando se o imóvel pertence ao locador autenticado:
+    if (imovel.locador_cpf != req.user.cpf) { // !==
+      return res.status(403).json({ message: 'Sem permissão para criar unidade nesse imóvel' });
+    }
+
+    // verificando se id_categoria_um existe (se for informado)
+    if (id_categoria_um) {
+      const categoria = await unidadeRepository.obterCategoriaPorId(id_categoria_um); // coloquei essa função no repositório de unidade_moradia mesmo, pq não fizemos os arquivos pra categoria_um
+      if (!categoria) {
+        return res.status(404).json({ message: 'Categoria não encontrada' });
+      }
+    }
+    
+    const unidade_criada = await unidadeRepository.criarUnidade({ 
+      nome_um, 
+      preco_aluguel, 
+      descricao: descricao || null, 
+      id_imovel, 
+      id_categoria_um: id_categoria_um || null, 
+      completo: !!completo, 
+      disponivel: true 
+    });
+
+    return res.status(201).json(unidade_criada);
+
+  } catch (error) {
+    console.error(error);
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
     return res.sendStatus(500);
   }
 };
 
 // :)
 const uploadFoto = async (req, res) => {
+<<<<<<< HEAD
   return res.status(500).json({ message: "Upload de foto não implementado" });
 };
 
@@ -194,12 +291,23 @@ const atualizaUnidade = async (req, res) => {
     const preco_aluguel = req.body.preco_aluguel
       ? parseFloat(req.body.preco_aluguel)
       : null;
+=======
+  return res.status(500).json({ message: 'Upload de foto não implementado' });
+};
+
+// :)
+const atualizaUnidade = async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const { nome_um, preco_aluguel, descricao, completo } = req.body;
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
     let { id_imovel, id_categoria_um } = req.body;
 
     if (id_imovel) id_imovel = parseInt(id_imovel);
     if (id_categoria_um) id_categoria_um = parseInt(id_categoria_um);
 
     // para caso o usuário apague um campo obrigatório
+<<<<<<< HEAD
     if (!nome_um || !preco_aluguel || !id_imovel) {
       return res
         .status(400)
@@ -207,13 +315,21 @@ const atualizaUnidade = async (req, res) => {
           message:
             "Nome da unidade, preço do aluguel e imóvel são obrigatórios.",
         }); // ok
+=======
+    if (!nome_um || preco_aluguel === undefined || !id_imovel) {
+      return res.status(400).json({ message: "Nome da unidade, preço do aluguel e imóvel são obrigatórios." });
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
     }
 
     // verificando se o preço é negativo
     if (preco_aluguel < 0) {
+<<<<<<< HEAD
       return res
         .status(400)
         .json({ message: "O preço do aluguel não pode ser negativo" }); // ok
+=======
+      return res.status(400).json({ message: 'O preço do aluguel não pode ser negativo' });
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
     }
 
     // verificando se a unidade existe => mudei para já trazer o Imovel junto
@@ -221,6 +337,7 @@ const atualizaUnidade = async (req, res) => {
     // obs.: movi para o início a verificação da existência da unidade, para em seguida verificar se a unidade pertece ao locador autenticado
     const unidade = await unidadeRepository.obterUnidadePorId(id);
     if (!unidade) {
+<<<<<<< HEAD
       return res
         .status(404)
         .json({ message: "Unidade de moradia não encontrada." }); // ok
@@ -248,10 +365,28 @@ const atualizaUnidade = async (req, res) => {
           .json({
             message: "Sem permissão para mover a unidade para esse imóvel",
           }); // ok
+=======
+      return res.status(404).json({ message: 'Unidade de moradia não encontrada.' });
+    }
+    // verificando se a unidade pertence ao locador autenticado
+    if (unidade.Imovel?.locador_cpf !== req.user.cpf) { // descobri que se colocar ?  depois de Imovel, aí não dá erro se Imovel for null ou undefined (não devia ser, mas só pra garantir)
+      return res.status(403).json({ message: 'Sem permissão para atualizar essa unidade' });
+    }
+
+    // se estiver alterando o imóvel, temos que verificar se o novo imóvel pertence ao locador autenticado
+    if (id_imovel != unidade.id_imovel) { // !==
+      const novoImovel = await imovelRepository.obterImovelPorId(id_imovel);
+      if (!novoImovel) {
+        return res.status(404).json({ message: 'Imóvel não encontrado' });
+      }
+      if (novoImovel.locador_cpf !== req.user.cpf) {
+        return res.status(403).json({ message: 'Sem permissão para mover a unidade para esse imóvel' });
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
       }
     }
 
     // verificando se id_categoria_um existe (se for informado)
+<<<<<<< HEAD
     // if (id_categoria_um) {
     //   const categoria = await unidadeRepository.obterCategoriaPorId(id_categoria_um);
     //   if (!categoria) {
@@ -269,19 +404,46 @@ const atualizaUnidade = async (req, res) => {
       completo,
     });
 
+=======
+    if (id_categoria_um) {
+      const categoria = await unidadeRepository.obterCategoriaPorId(id_categoria_um);
+      if (!categoria) {
+        return res.status(404).json({ message: 'Categoria não encontrada' });
+      }
+    }
+
+    const unidade_atualizada = await unidadeRepository.atualizarUnidade({ 
+        id,  
+        nome_um, 
+        preco_aluguel, 
+        descricao, 
+        id_imovel, 
+        id_categoria_um, 
+        completo 
+      }
+    );
+    
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
     // if (unidade_atualizada) {
     //   return res.status(200).json(unidade_atualizada);
     // } else {
     //   return res.status(404).json({ message: 'Unidade de moradia não encontrada.' });
     // }
     return res.status(200).json(unidade_atualizada);
+<<<<<<< HEAD
+=======
+
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
   } catch (error) {
     console.error(error);
     return res.sendStatus(500);
   }
 };
 
+<<<<<<< HEAD
 // :) aprovado para locador
+=======
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
 const mudaDisponibilidade = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
@@ -290,7 +452,11 @@ const mudaDisponibilidade = async (req, res) => {
     // verificando se a unidade existe
     const unidade = await unidadeRepository.obterUnidadePorId(id);
     if (!unidade) {
+<<<<<<< HEAD
       return res.status(404).json({ message: "Unidade não encontrada" }); // ok
+=======
+      return res.status(404).json({ message: "Unidade não encontrada" });
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
     }
 
     // verificando se a unidade pertence ao locador autenticado
@@ -298,6 +464,7 @@ const mudaDisponibilidade = async (req, res) => {
     // if (imovel.locador_cpf !== locador_cpf) {
     //   return res.status(403).json({ message: "Sem permissão para alterar a disponibilidade dessa unidade" });
     // }
+<<<<<<< HEAD
     if (unidade.Imovel.locador_cpf !== locador_cpf) {
       // fiz pra unidade já vir com Imovel incluído
       return res
@@ -323,6 +490,21 @@ const mudaDisponibilidade = async (req, res) => {
 
     const unidade_atualizada = await unidadeRepository.atualizarUnidade({
       // ok
+=======
+    if (unidade.Imovel.locador_cpf !== locador_cpf) { // fiz pra unidade já vir com Imovel incluído
+      return res.status(403).json({ message: "Sem permissão para alterar a disponibilidade dessa unidade" });
+    }
+    
+    if (unidade.disponivel === false) {
+      // verificando se existe contrato ativo associado à unidade
+      const tem_contrato_ativo = await contratoRepository.existeContratoAtivoNaUnidade(id);
+      if (tem_contrato_ativo) {
+        return res.status(409).json({ message: "Não é possível disponibilizar a unidade, pois existe um contrato ativo associado a ela." });
+      }
+    }
+    
+    const unidade_atualizada = await unidadeRepository.atualizarUnidade({
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
       id,
       nome_um: unidade.nome_um,
       preco_aluguel: unidade.preco_aluguel,
@@ -330,26 +512,46 @@ const mudaDisponibilidade = async (req, res) => {
       id_imovel: unidade.id_imovel,
       id_categoria_um: unidade.id_categoria_um,
       completo: unidade.completo,
+<<<<<<< HEAD
       disponivel: !unidade.disponivel, // só esse muda
     });
 
     return res.status(200).json(unidade_atualizada);
+=======
+      disponivel: !unidade.disponivel // só esse muda
+    });
+
+    return res.status(200).json(unidade_atualizada);
+
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
   } catch (error) {
     console.error(error);
     return res.sendStatus(500);
   }
 };
 
+<<<<<<< HEAD
 // :) aprovado para locador
+=======
+// :)
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
 const deletaUnidade = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const locador_cpf = req.user.cpf;
+<<<<<<< HEAD
 
     // verificando se a unidade existe (já vem com Imovel incluído)
     const unidade = await unidadeRepository.obterUnidadePorId(id);
     if (!unidade) {
       return res.status(404).json({ message: "Unidade não encontrada" }); // ok
+=======
+    
+    // verificando se a unidade existe (já vem com Imovel incluído)
+    const unidade = await unidadeRepository.obterUnidadePorId(id);
+    if (!unidade) {
+      return res.status(404).json({ message: 'Unidade não encontrada' });
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
     }
 
     // verificando se a unidade pertence ao locador autenticado
@@ -359,6 +561,7 @@ const deletaUnidade = async (req, res) => {
     //   return res.status(403).json({ message: 'Sem permissão para deletar essa unidade' });
     // }
     if (unidade.Imovel.locador_cpf !== locador_cpf) {
+<<<<<<< HEAD
       return res
         .status(403)
         .json({ message: "Sem permissão para deletar essa unidade" }); // ok
@@ -377,6 +580,21 @@ const deletaUnidade = async (req, res) => {
         message:
           "Não é possível deletar esta unidade, pois ela possui contratos associados", // ok
         error: "Integridade referencial violada",
+=======
+      return res.status(403).json({ message: 'Sem permissão para deletar essa unidade' });
+    }
+
+    await unidadeRepository.deletarUnidade(id);
+    
+    return res.status(200).json({ message: 'Unidade removida com sucesso', unidade: unidade }); // se a função executar sem lançar erro, é pq deletou com sucesso // se algo der errado, cai no catch
+    
+  } catch (error) {
+    // Erro de restrição de chave estrangeira (contratos associados)
+    if (error.name === 'SequelizeForeignKeyConstraintError') {
+      return res.status(409).json({ 
+        message: "Não é possível deletar esta unidade, pois ela possui contratos associados",
+        error: "Integridade referencial violada"
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
       });
     }
     console.error("Erro ao deletar unidade:", error);
@@ -384,7 +602,11 @@ const deletaUnidade = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 // :) aprovado para locador
+=======
+// :)
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
 const listaContratosDaUnidade = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
@@ -393,7 +615,11 @@ const listaContratosDaUnidade = async (req, res) => {
     // verificando se a unidade existe
     const unidade = await unidadeRepository.obterUnidadePorId(id);
     if (!unidade) {
+<<<<<<< HEAD
       return res.status(404).json({ message: "Unidade não encontrada" }); // ok
+=======
+      return res.status(404).json({ message: 'Unidade não encontrada' });
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
     }
 
     // verificando se a unidade pertence ao locador autenticado
@@ -401,6 +627,7 @@ const listaContratosDaUnidade = async (req, res) => {
     // if (imovel.locador_cpf !== locador_cpf) {
     //   return res.status(403).json({ message: 'Sem permissão para visualizar os contratos dessa unidade' });
     // }
+<<<<<<< HEAD
     if (unidade.Imovel.locador_cpf !== locador_cpf) {
       return res
         .status(403)
@@ -412,6 +639,16 @@ const listaContratosDaUnidade = async (req, res) => {
     const result = await contratoRepository.listarContratosDaUnidade(id); // ok
 
     return res.status(200).json(result);
+=======
+     if (unidade.Imovel.locador_cpf !== locador_cpf) {
+      return res.status(403).json({ message: 'Sem permissão para visualizar os contratos dessa unidade' });
+    }
+
+    const result = await contratoRepository.listarContratosDaUnidade(id);
+
+    return res.status(200).json(result);
+
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
   } catch (error) {
     console.error(error);
     return res.sendStatus(500);

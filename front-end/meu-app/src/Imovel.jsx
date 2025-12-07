@@ -15,12 +15,62 @@ import {
   InputBase,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-
+import { useMemo } from "react";
 import { styled, alpha } from "@mui/material/styles";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
+
+const Search = styled("div")(({ theme }) => ({
+  position: "relative",
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  "&:hover": {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginLeft: 0,
+  width: "400px",
+  [theme.breakpoints.up("sm")]: {
+    marginLeft: theme.spacing(1),
+    width: "auto",
+  },
+}));
+
+const SearchIconWrapper = styled("div")(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: "100%",
+  position: "absolute",
+  pointerEvents: "none",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: "#ffffff",
+  fontWeight: "bold", // NEGRITO
+  width: "400px",
+  "& .MuiInputBase-input": {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create("width"),
+
+    "&::placeholder": {
+      color: "#ffffff",
+      opacity: 0.8,
+      fontWeight: "bold",
+    },
+
+    [theme.breakpoints.up("sm")]: {
+      width: "120ch",
+      "&:focus": {
+        width: "200ch",
+      },
+    },
+  },
+}));
 
 export default function Imovel({ handleLogout }) {
   const navigate = useNavigate();
@@ -44,66 +94,6 @@ export default function Imovel({ handleLogout }) {
     { title: "Casal" },
     { title: "Solteiros" },
   ];
-
-  const imoveisFiltrados = selecaoFiltro;
-  imoveisFiltrados
-    ? imovel.filter((item) => item.publico === selecaoFiltro)
-    : "Categoria não encontrada";
-
-  //verificando se o que foi escrito na barra de pesquisa existe
-  const imovelPesquisado = imovel.filter((item) =>
-    item.nome_imovel.toLowerCase().includes(barraPesquisa.toLowerCase())
-  );
-
-  const Search = styled("div")(({ theme }) => ({
-    position: "relative",
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.common.white, 0.15),
-    "&:hover": {
-      backgroundColor: alpha(theme.palette.common.white, 0.25),
-    },
-    marginLeft: 0,
-    width: "400px",
-    [theme.breakpoints.up("sm")]: {
-      marginLeft: theme.spacing(1),
-      width: "auto",
-    },
-  }));
-
-  const SearchIconWrapper = styled("div")(({ theme }) => ({
-    padding: theme.spacing(0, 2),
-    height: "100%",
-    position: "absolute",
-    pointerEvents: "none",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  }));
-
-  const StyledInputBase = styled(InputBase)(({ theme }) => ({
-    color: "#ffffff",
-    fontWeight: "bold", // NEGRITO
-    width: "400px",
-    "& .MuiInputBase-input": {
-      padding: theme.spacing(1, 1, 1, 0),
-      // vertical padding + font size from searchIcon
-      paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-      transition: theme.transitions.create("width"),
-
-      "&::placeholder": {
-        color: "#ffffff",
-        opacity: 0.8,
-        fontWeight: "bold",
-      },
-
-      [theme.breakpoints.up("sm")]: {
-        width: "120ch",
-        "&:focus": {
-          width: "200ch",
-        },
-      },
-    },
-  }));
 
   const filterOptions = createFilterOptions({
     matchFrom: "start",
@@ -149,6 +139,24 @@ export default function Imovel({ handleLogout }) {
     }
   }
 
+  const imoveisFiltrados = useMemo(() => {
+    let resultado = imovel;
+
+    // Filtro por público
+    if (selecaoFiltro) {
+      resultado = resultado.filter((item) => item.publico === selecaoFiltro);
+    }
+
+    // Filtro por barra de pesquisa
+    if (barraPesquisa) {
+      resultado = resultado.filter((item) =>
+        item.nome_imovel.toLowerCase().includes(barraPesquisa.toLowerCase())
+      );
+    }
+
+    return resultado;
+  }, [imovel, selecaoFiltro, barraPesquisa]);
+
   return (
     <>
       <AppBar
@@ -170,6 +178,10 @@ export default function Imovel({ handleLogout }) {
               getOptionLabel={(option) => option.title}
               filterOptions={filterOptions}
               sx={{ width: 300 }}
+              value={
+                filtro_publico.find((event) => event.title === selecaoFiltro) ||
+                null
+              }
               onChange={(event, newValue) => {
                 setSelecaoFiltro(newValue ? newValue.title : "");
               }}
@@ -201,7 +213,7 @@ export default function Imovel({ handleLogout }) {
                 placeholder="Nome do Imóvel"
                 inputProps={{ "aria-label": "search" }}
                 value={barraPesquisa}
-                onChange={(e) => setBarraPesquisa(e.target.value)}
+                onChange={(event) => setBarraPesquisa(event.target.value)}
               />
             </Search>
           </Box>
@@ -225,13 +237,15 @@ export default function Imovel({ handleLogout }) {
       {/*Lista de Imóveis*/}
 
       {/* Lista de imóveis */}
-      {!imovel || imovel.length === 0 ? (
+      {!imoveisFiltrados || imoveisFiltrados.length === 0 ? (
         <Typography variant="h6" sx={{ mt: 3, textAlign: "center" }}>
-          Nenhum imóvel cadastrado ainda.
+          {imovel.length === 0
+            ? "Nenhum imóvel cadastrado ainda."
+            : "Nenhum imóvel encontrado com o filtro aplicado"}
         </Typography>
       ) : (
         <Box sx={{ p: 2, display: "flex", gap: 2, flexWrap: "wrap" }}>
-          {imovel.map((item) => (
+          {imoveisFiltrados.map((item) => (
             <Card key={item.id} sx={{ width: 300 }}>
               <CardActionArea>
                 <CardContent>

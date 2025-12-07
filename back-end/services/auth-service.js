@@ -105,7 +105,7 @@ const configureSerialization = () => {
   });
 };
 
-// Função para criar novo usuário
+// Função para criar novo usuário (Locador)
 const criarNovoUsuario = async (userData) => {
   const saltRounds = 10;
   const { cpf, senha, opcao, data_nascimento, nome, genero, trabalha, estuda } =
@@ -115,7 +115,7 @@ const criarNovoUsuario = async (userData) => {
 
   /*await model.Usuario.create({
     cpf: userCPF,
-    //nome: userName,
+    nome: userName,
     senha: hashedPasswd,
   });*/
 

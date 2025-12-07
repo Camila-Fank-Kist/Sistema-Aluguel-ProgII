@@ -1,17 +1,26 @@
 const model = require("../models");
 
+<<<<<<< HEAD
 const listarContratosDoLocador = async (locador_cpf, filtros) => {
   return await model.Contrato.findAll({
     where: filtros, // "WHERE" do banco de dados => filtros que vão ser aplicados na tabela Contrato
     // os atributos do objeto "filtros", que vão para o where, devem ter o mesmo nome das colunas do modelo (model.Contrato)
     include: [
       // "JOIN" do banco de dados
+=======
+const listarContratosDoLocador = async (locador_cpf, filtros) => {  
+  return await model.Contrato.findAll({
+    where: filtros, // "WHERE" do banco de dados => filtros que vão ser aplicados na tabela Contrato
+    // os atributos do objeto "filtros", que vão para o where, devem ter o mesmo nome das colunas do modelo (model.Contrato)
+    include: [ // "JOIN" do banco de dados
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
       {
         model: model.Unidade_moradia,
         include: [
           {
             model: model.Imovel,
             where: {
+<<<<<<< HEAD
               locador_cpf: locador_cpf,
             }, // precisa obrigatoriamente ter {} no where
           },
@@ -19,6 +28,15 @@ const listarContratosDoLocador = async (locador_cpf, filtros) => {
       },
     ],
     order: [["data_inicio", "DESC"]],
+=======
+              locador_cpf: locador_cpf
+            } // precisa obrigatoriamente ter {} no where
+          }
+        ]
+      }
+    ],
+    order: [['data_inicio', 'DESC']],
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
   });
 };
 
@@ -26,6 +44,7 @@ const listarContratosDoInquilino = async (inquilino_cpf, filtros) => {
   return await model.Contrato.findAll({
     where: {
       ...filtros,
+<<<<<<< HEAD
       inquilino_cpf,
     },
     include: [
@@ -35,6 +54,16 @@ const listarContratosDoInquilino = async (inquilino_cpf, filtros) => {
       },
     ],
     order: [["data_inicio", "DESC"]],
+=======
+      inquilino_cpf
+    },
+    include: [ // pra mostrar o nome da unidade de moradia
+      {
+        model: model.Unidade_moradia,
+      }
+    ],
+    order: [['data_inicio', 'DESC']],
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
   });
 };
 
@@ -93,7 +122,11 @@ const listarContratosDaUnidade = async (id_um) => {
   try {
     return await model.Contrato.findAll({
       where: { id_um: id_um },
+<<<<<<< HEAD
       order: [["data_inicio", "DESC"]],
+=======
+      order: [['data_inicio', 'DESC']],
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
     });
   } catch (error) {
     throw error;

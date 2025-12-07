@@ -168,7 +168,7 @@ export default function Login({ handleLogin }) {
             <TextField
               required
               id="username-input"
-              label="CPF: "
+              label="CPF (digite com . e -): "
               size="small"
               value={username}
               onChange={(event) => {

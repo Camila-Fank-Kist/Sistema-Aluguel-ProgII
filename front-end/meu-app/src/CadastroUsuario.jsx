@@ -93,6 +93,7 @@ export default function CadastroUsuario({ opcao, voltar }) {
         <TextField
           required
           id="outlined-required"
+          type="password" //mudei
           label="Senha"
           value={senha}
           onChange={(event) => {
@@ -160,6 +161,10 @@ export default function CadastroUsuario({ opcao, voltar }) {
             shrink: true,
           }}
         />
+        <p>
+          Caso você também seja um locador no sistema, suas senhas deverão ser
+          diferentes
+        </p>
         <TextField
           required
           id="outlined-required"

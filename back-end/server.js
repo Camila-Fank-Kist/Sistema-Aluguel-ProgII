@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 
 const imovelRouter = require("./controllers/imovel-controller");
+const unidadeRouter = require("./controllers/unidade_moradia-controller");
+const contratoRouter = require("./controllers/contrato-controller");
 const locadorRouter = require("./controllers/locador-controller");
 const inquilinoRouter = require("./controllers/inquilino-controller");
 const locador_permissaoRouter = require("./controllers/locador_permissao-controller");
@@ -38,17 +40,21 @@ authService.configureJwtStrategy();
 authService.configureSerialization();
 
 const PORT = 3002;
-app.listen(PORT, () => console.log(`Servidor está rodando na porta ${PORT}.`));
+const server = app.listen(PORT, () => console.log(`Servidor está rodando na porta ${PORT}.`));
+
+// Manter referência do servidor para evitar garbage collection
+server.on('error', (err) => {
+  console.error('Erro no servidor:', err);
+});
 
 // Usar o router de autenticação
 app.use("/", authRouter);
 
 app.use("/imovel", imovelRouter);
+app.use("/unidade-moradia", unidadeRouter);
+app.use("/contrato", contratoRouter);
 app.use("/locador", locadorRouter);
 app.use("/inquilino", inquilinoRouter);
 app.use("/locador_permissao", locador_permissaoRouter);
 app.use("/inquilino_permissao", inquilino_permissaoRouter);
 app.use("/permissao", permissaoRouter);
-
-//app.use("/unidade-moradia", unidadeMoradiaRouter);
-//app.use("/contrato", contratoRouter);

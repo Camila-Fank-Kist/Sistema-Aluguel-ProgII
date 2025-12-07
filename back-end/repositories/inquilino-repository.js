@@ -16,8 +16,15 @@ const criarInquilino = async (inquilino) => {
   return inquilino;
 };
 
+<<<<<<< HEAD
 module.exports = {
   obterTodosInquilinos,
   obterInquilinoPorCpf,
   criarInquilino,
+=======
+module.exports = { 
+  obterTodosInquilinos, 
+  obterInquilinoPorCpf,
+  criarInquilino 
+>>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
 };
