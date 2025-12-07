@@ -8,11 +8,11 @@ const contratoRouter = express.Router();
 
 
 // GET /contrato/locador - listar contratos das unidades do locador
-contratoRouter.get("/locador", authService.requireJWTAuth, contratoService.listaContratosDoLocador);
+contratoRouter.get("/locador", authService.requireJWTAuth, authService.verificarSeIsLocador, contratoService.listaContratosDoLocador);
 // para o locador, listar todos os contratos das unidades de moradia dos imóveis que ele possui
 
 // GET /contrato/inquilino - listar contratos do inquilino
-contratoRouter.get("/inquilino", authService.requireJWTAuth, contratoService.listaContratosDoInquilino);
+contratoRouter.get("/inquilino", authService.requireJWTAuth, authService.verificarSeIsInquilino, contratoService.listaContratosDoInquilino);
 // para o inquilino, listar todos os contratos dele (onde inquilino_cpf é o cpf do inquilino)
 
 // obs.: para buscar os contratos por FILTROS, deixamos o GET geral ("/locador" e "/inquilino"), e passamos parâmetros para filtrar a listagem
@@ -22,6 +22,7 @@ contratoRouter.get("/inquilino", authService.requireJWTAuth, contratoService.lis
 
 // GET /contrato/:id - Detalhar contrato por id
 contratoRouter.get("/:id", authService.requireJWTAuth, contratoService.retornaContratoPorId);
+// tanto locador quanto inquilino podem ver o contrato (já tinha feito a verificação no service => mas talvez mude depois pra fazer um middleware pra fazer isso)
 
 
 // --------------------------------------------------------------
@@ -31,20 +32,20 @@ contratoRouter.get("/:id", authService.requireJWTAuth, contratoService.retornaCo
 
 
 // POST /contrato - Criar novo contrato
-contratoRouter.post("/", authService.requireJWTAuth, contratoService.criaContrato); 
+contratoRouter.post("/", authService.requireJWTAuth, authService.verificarSeIsLocador, contratoService.criaContrato); 
 // lembrar que ao criar um contrato, tem que mudar o campo "disponivel" da unidade de moradia associada para false
 // e se a unidade já estiver ocupada, não pode criar o contrato
 // quando criamos o contrato, ele ficar automaticamente ativo (contrato_ativo=true)
 
 
 // PUT /contrato/:id - Atualizar contrato
-contratoRouter.put("/:id", authService.requireJWTAuth, contratoService.atualizaContrato); 
+contratoRouter.put("/:id", authService.requireJWTAuth, authService.verificarSeIsLocador, contratoService.atualizaContrato); 
 // obs1.: aqui NÃO alteramos o atributo "contrato_ativo" do contrato
 // obs2.: os atributos data_inicio e data_fim vão ser setados automaticamente (data_inicio na criação do contrato, data_fim na hora de encerrar o contrato), e não podem ser alterados
 
 // rota própria para encerrar o contrato (contrato_ativo=false), para que, nessa rota específica, a gente já implemente toda a lógica necessária para encerrar o contrato e atualizar a unidade de moradia (atualizar o campo "disponivel" da unidade de moradia para true)
 // POST /contrato/:id/encerrar - Encerrar contrato
-contratoRouter.post("/:id/encerrar", authService.requireJWTAuth, contratoService.encerraContrato);
+contratoRouter.post("/:id/encerrar", authService.requireJWTAuth, authService.verificarSeIsLocador, contratoService.encerraContrato);
 // obs3.: uma vez que o contrato_ativo for false, não vai ser possível reativar o contrato nem fazer qualquer alteração nele
 
 

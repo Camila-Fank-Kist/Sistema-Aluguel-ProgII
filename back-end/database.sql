@@ -187,3 +187,4 @@ INSERT INTO contrato (pdf, preco, data_fim, data_inicio, contrato_ativo, id_um, 
 -- ('contrato_003.pdf', 950.00, '2026-03-15', '2025-03-15', true, 5, '44455566677'),
 -- ('contrato_004.pdf', 1500.00, '2024-12-31', '2024-01-01', false, 6, '55566677788'),
 -- ('contrato_005.pdf', 700.00, '2026-01-31', '2025-02-01', true, 7, '66677788899');
+

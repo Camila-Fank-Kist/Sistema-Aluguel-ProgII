@@ -8,9 +8,16 @@ const listarContratosDoLocador = async (locador_cpf, filtros) => {
       {
         model: model.Unidade_moradia,
         as: "Unidade_moradia", // defini pois vinha com um nome estranho (m no final)
+        required: true, // apenas contratos que tenham unidade de moradia vão ser retornados (INNER JOIN)
+        // precisei colocar o "required: true" porque antes ele tava retornando os contratos que não eram do locador autenticado (e retornava só o contrato, sem unidade de moradia nem imóvel), porque ele fazia um LEFT JOIN:
+        // mesmo quando o where não fosse atendido, ele retornava o contrato com a unidade de moradia como null
+        // porque o sequelize por padrão faz LEFT JOIN nos includes
+        // descobri porque na listagem de unidade de moradia funciona sem o "required: true" e aqui não:
+        // porque quando você coloca um where dentro de um include, o Sequelize automaticamente assume "required: true" para aquele include específico
         include: [
           {
             model: model.Imovel,
+            // required: true, // como tem um where nesse include, o Sequelize automaticamente assume "required: true", ntão não precisa colocar explicitamente
             where: {
               locador_cpf: locador_cpf
             } // precisa obrigatoriamente ter {} no where
