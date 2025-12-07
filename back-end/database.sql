@@ -175,3 +175,15 @@ INSERT INTO permissao (id, descricao) VALUES (2, 'TELA_INQUILINO') ;
 INSERT INTO locador_permissao (cpf, id_permissao) VALUES ('111.111.111-11', 1);
 
 INSERT INTO inquilino_permissao (cpf, id_permissao) VALUES ('333.333.333-33', 2);
+
+
+INSERT INTO categoria_um (categoria_da_um) VALUES ('Quarto'), ('Apartamento'), ('Casa'), ('Kitnet'), ('Studio');
+
+INSERT INTO contrato (pdf, preco, data_fim, data_inicio, contrato_ativo, id_um, inquilino_cpf) VALUES
+('contrato_001.pdf', 800.00, '2025-12-31', '2025-01-01', true, 3, '22233344455'),
+('contrato_002.pdf', 1200.00, '2025-06-30', '2024-07-01', false, 4, '33344455566'),
+('contrato_003.pdf', 800.00, '2025-12-31', '2025-01-01', false, 3, '22233344455'),
+('contrato_004.pdf', 800.00, '2025-12-31', '2025-01-01', false, 3, '22233344455'),
+-- ('contrato_003.pdf', 950.00, '2026-03-15', '2025-03-15', true, 5, '44455566677'),
+-- ('contrato_004.pdf', 1500.00, '2024-12-31', '2024-01-01', false, 6, '55566677788'),
+-- ('contrato_005.pdf', 700.00, '2026-01-31', '2025-02-01', true, 7, '66677788899');

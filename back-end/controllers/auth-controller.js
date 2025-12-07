@@ -16,7 +16,7 @@ authRouter.post(
     res.json({
       message: "Login successful",
       token: token,
-      tipo_usuario: response.user.tipo_usuario,
+      tipo_usuario: req.user.tipo_usuario, // response.user.tipo_usuario
     });
   }
 );

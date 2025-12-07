@@ -66,12 +66,19 @@ const configureJwtStrategy = () => {
         jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
         secretOrKey: "your-secret-key",
       },
-      async (payload, done) => {
+      async (payload, done) => { // payload tem os dados que foram colocados no token (aqui, é só o username)
         try {
-          user = await model.Locador.findByPk(payload.username);
 
-          if (user == null) {
+          // user tem todos os atributos do usuário
+          // mas temos que guardar também em user (req.user) o tipo de usuário (locador ou inquilino), para verificar, depois do middleware de autenticação (requireJWTAuth), qual é o tipo de usuário que está autenticado
+          let user = await model.Locador.findByPk(payload.username);
+          if (user) {
+            user.tipo_usuario = "locador"; // o usuário é do tipo locador
+          } else {
             user = await model.Inquilino.findByPk(payload.username);
+            if (user) {
+              user.tipo_usuario = "inquilino"; // o usuário é do tipo inquilino
+            }
           }
 
           if (user) {
@@ -151,6 +158,7 @@ const gerarToken = (username) => {
 
 // Middleware para autenticação JWT
 const requireJWTAuth = passport.authenticate("jwt", { session: false });
+
 
 // Função para verificar se um usuário tem uma permissão específica por descrição
 const verificarPermissaoPorDescricao = async (cpf, descricaoPermissao) => {
@@ -264,6 +272,41 @@ const requirePermissao = (descricaoPermissao) => {
   ];
 };
 
+// o express tem uma fila de funções (middlewares), e cada função pode passar para a próxima (enviando/devolvendo next()) ou encerrar a requisição (enviando uma resposta)
+
+// Middleware para verificar se o usuário é locador
+const verificarSeIsLocador = (req, res, next) => {
+  try {
+    if (!req.user) {
+        return res.status(401).json({ message: "Usuário não autenticado." });
+      }
+    if (req.user.tipo_usuario !== 'locador') {
+      return res.status(403).json({ message: 'Acesso negado. Apenas locadores podem acessar essa rota.' });
+    }
+    return next(); // continua para a próxima função
+  } catch (error) {
+    console.error("Erro ao verificar tipo de usuário:", error);
+    return res.status(500).json({ message: "Erro interno do servidor." });
+  }
+};
+
+// Middleware para verificar se o usuário é inquilino
+const verificarSeIsInquilino = (req, res, next) => {
+  try {
+    if (!req.user) {
+        return res.status(401).json({ message: "Usuário não autenticado." });
+      }
+    if (req.user.tipo_usuario !== 'inquilino') {
+      return res.status(403).json({ message: 'Acesso negado. Apenas inquilinos podem acessar essa rota.' });
+    }
+    return next(); // continua para a próxima função
+  } catch (error) {
+    console.error("Erro ao verificar tipo de usuário:", error);
+    return res.status(500).json({ message: "Erro interno do servidor." });
+  }
+};
+
+
 module.exports = {
   configureLocalStrategy,
   configureJwtStrategy,
@@ -275,4 +318,6 @@ module.exports = {
   obterPermissoesUsuario,
   verificarPermissaoMiddleware,
   requirePermissao,
+  verificarSeIsLocador,
+  verificarSeIsInquilino,
 };

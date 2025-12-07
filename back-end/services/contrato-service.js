@@ -103,7 +103,7 @@ const retornaContratoPorId = async (req, res) => {
 const criaContrato = async (req, res) => {
   try {
     const locador_cpf = req.user.cpf;
-    const { id_um, inquilino_cpf, preco } = req.body;
+    const { id_um, inquilino_cpf, preco } = req.body; // se a propriedade não existe no objeto da requisição, o valor dela fica undefined
 
     if (!id_um || !inquilino_cpf || preco === undefined) {
       return res.status(400).json({ message: "Unidade de moradia, inquilino e preço são obrigatórios." });
