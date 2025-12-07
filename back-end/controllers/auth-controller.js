@@ -11,12 +11,13 @@ authRouter.post(
   passport.authenticate("local", { session: false }),
   (req, res) => {
     // Cria o token JWT
-    const token = authService.gerarToken(req.body.username);
+    const token = authService.gerarToken(req.user.cpf);
+    //    const token = authService.gerarToken(req.body.username);
 
     res.json({
       message: "Login successful",
       token: token,
-      tipo_usuario: response.user.tipo_usuario,
+      tipo_usuario: req.user.tipo_usuario,
     });
   }
 );

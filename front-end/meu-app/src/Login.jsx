@@ -14,9 +14,10 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
+  Typography,
 } from "@mui/material";
 import CadastroUsuario from "./CadastroUsuario";
-import Imovel from "./Imovel";
+import { useNavigate } from "react-router-dom";
 
 export default function Login({ handleLogin }) {
   const [username, setUsername] = React.useState("");
@@ -27,8 +28,9 @@ export default function Login({ handleLogin }) {
   const [mostrarPergunta, setMostrarPergunta] = useState(false);
   const [opcao, setOpcao] = useState("");
   const [mostrarCadastro, setMostrarCadastro] = useState(false);
-  const [telaImoveis, setTelaImoveis] = useState(false);
   const [telaLogin, setTelaLogin] = useState(true);
+
+  const navigate = useNavigate();
 
   async function enviaLogin(event) {
     event.preventDefault();
@@ -37,6 +39,7 @@ export default function Login({ handleLogin }) {
         username: username,
         password: passwd,
       });
+
       if (response.status >= 200 && response.status < 300) {
         // Salva o token JWT na sessão
         localStorage.setItem("token", response.data.token);
@@ -45,6 +48,12 @@ export default function Login({ handleLogin }) {
           cpf: username,
           tipo_usuario: response.data.tipo_usuario,
         });
+        navigate("/imovel/:cpf", { state: { cpf: username } });
+        setMostrarCadastro(false);
+        setMostrarPergunta(false);
+        setTelaLogin(false);
+        localStorage.setItem("cpf", username);
+        return;
       } else {
         // falha
         console.error("Falha na autenticação");
@@ -81,7 +90,6 @@ export default function Login({ handleLogin }) {
     <Box style={{ maxWidth: "300px" }}>
       {mostrarPergunta == true &&
       mostrarCadastro == false &&
-      telaImoveis == false &&
       telaLogin == false ? (
         <FormControl>
           <FormLabel id="demo-row-radio-buttons-group-label">
@@ -116,25 +124,46 @@ export default function Login({ handleLogin }) {
               onClick={() => {
                 setMostrarCadastro(true);
                 setMostrarPergunta(false);
-                setTelaImoveis(false);
                 setTelaLogin(false);
               }}
+              disabled={opcao === ""} //desabilita o botão próximo enquanto o usuário não escolher uma das opções
             >
               Próximo
+            </Button>
+            <Button
+              variant="outlined"
+              style={{
+                maxWidth: "100px",
+                minWidth: "100px",
+              }}
+              color="error"
+              onClick={() => {
+                setMostrarCadastro(false);
+                setMostrarPergunta(false);
+                setTelaLogin(true);
+              }}
+            >
+              Cancelar
             </Button>
           </RadioGroup>
         </FormControl>
       ) : mostrarCadastro == true &&
         mostrarPergunta == false &&
-        telaImoveis == false &&
         telaLogin == false ? (
-        <CadastroUsuario opcao={opcao} />
-      ) : mostrarCadastro == false &&
-        mostrarPergunta == false &&
-        telaImoveis == false &&
-        telaLogin == true ? (
+        <CadastroUsuario
+          opcao={opcao}
+          voltar={() => {
+            setMostrarCadastro(false);
+            setMostrarPergunta(false);
+            setTelaLogin(true);
+          }}
+        />
+      ) : (
         //se chegou aqui, é porque o usuário quer entrar no sistema
         <Stack spacing={2}>
+          <Typography variant="h4" component="h1">
+            Login
+          </Typography>
           <Stack spacing={2}>
             <TextField
               required
@@ -150,7 +179,7 @@ export default function Login({ handleLogin }) {
               required
               id="passwd-input"
               label="Senha: "
-              type="password"
+              type="password" //mudei
               size="small"
               value={passwd}
               onChange={(event) => {
@@ -166,13 +195,7 @@ export default function Login({ handleLogin }) {
                 minWidth: "100px",
               }}
               color="primary"
-              onClick={() => {
-                enviaLogin;
-                setTelaImoveis(true);
-                setMostrarCadastro(false);
-                setMostrarPergunta(false);
-                setTelaLogin(false);
-              }}
+              onClick={enviaLogin}
             >
               Entrar
             </Button>
@@ -189,11 +212,10 @@ export default function Login({ handleLogin }) {
             </Button>
           </Stack>
           <p>Não tem login? Cadastre-se no sistema</p>
-          <Box>
+          <Box display="flex" alignItems="center" justifyContent="center">
             <Button
               variant="contained"
-              align-items="center"
-              justify-content="center"
+              width="100%"
               style={{
                 maxWidth: "100px",
                 minWidth: "100px",
@@ -202,14 +224,12 @@ export default function Login({ handleLogin }) {
               onClick={() => {
                 setMostrarPergunta(true);
                 setMostrarCadastro(false);
-                setTelaImoveis(false);
                 setTelaLogin(false);
               }}
             >
               Cadastrar
             </Button>
           </Box>
-
           <Snackbar
             open={openMessage}
             autoHideDuration={6000}
@@ -220,8 +240,6 @@ export default function Login({ handleLogin }) {
             </Alert>
           </Snackbar>
         </Stack>
-      ) : (
-        <Imovel />
       )}
     </Box>
   );

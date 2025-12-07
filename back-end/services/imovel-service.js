@@ -175,10 +175,31 @@ const retornaImovelPorId = async (req, res) => {
   }
 };
 
+// Função para buscar imóvel por CPF
+const retornaImovelPorCPF = async (req, res) => {
+  try {
+    const cpf = req.params.cpf; // Pega o CPF da URL
+    const imovel = await imovelRepository.obterImovelPorCPF({
+      locador_cpf: cpf,
+    });
+
+    if (imovel) {
+      //adicionar se existe alguma unidade de moradia associada, depois que a Camila mexer com a UM
+      res.status(200).json(imovel);
+    } else {
+      res.status(404).json({ message: "Imóvel não encontrado." });
+    }
+  } catch (error) {
+    console.log("Erro ao buscar imóvel:", error);
+    res.sendStatus(500);
+  }
+};
+
 module.exports = {
   retornaTodosImoveis,
   criarImovel,
   atualizaImovel,
   deletaImovel,
   retornaImovelPorId,
+  retornaImovelPorCPF,
 };

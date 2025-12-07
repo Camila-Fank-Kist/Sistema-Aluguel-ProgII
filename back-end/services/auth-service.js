@@ -126,6 +126,11 @@ const criarNovoUsuario = async (userData) => {
       data_nascimento,
       senha: hashedPasswd,
     });
+
+    await model.LocadorPermissao.create({
+      cpf: cpf,
+      id_permissao: 1,
+    });
   } else {
     await model.Inquilino.create({
       cpf,
@@ -135,6 +140,11 @@ const criarNovoUsuario = async (userData) => {
       trabalha,
       estuda,
       genero,
+    });
+
+    await model.InquilinoPermissao.create({
+      cpf: cpf,
+      id_permissao: 2,
     });
   }
 
