@@ -7,6 +7,7 @@ const listarContratosDoLocador = async (locador_cpf, filtros) => {
     include: [ // "JOIN" do banco de dados
       {
         model: model.Unidade_moradia,
+        as: "Unidade_moradia", // defini pois vinha com um nome estranho (m no final)
         include: [
           {
             model: model.Imovel,
@@ -30,6 +31,7 @@ const listarContratosDoInquilino = async (inquilino_cpf, filtros) => {
     include: [ // pra mostrar o nome da unidade de moradia
       {
         model: model.Unidade_moradia,
+        as: "Unidade_moradia",
       }
     ],
     order: [['data_inicio', 'DESC']],
@@ -42,6 +44,7 @@ const obterContratoPorId = async (id) => {
     include: [
       {
         model: model.Unidade_moradia,
+        as: "Unidade_moradia",
         include: [{ model: model.Imovel }],
       },
       { model: model.Inquilino },

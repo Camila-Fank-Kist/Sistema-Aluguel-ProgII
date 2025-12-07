@@ -36,6 +36,7 @@ module.exports = (sequelize, DataTypes) => {
 		Contrato.belongsTo(models.Unidade_moradia, {
 			foreignKey: "id_um", // coluna nessa tabela que aponta para Unidade_moradia
 			sourceKey: "id", // chave primária na tabela Unidade_moradia que é referenciada pela chave estrangeira dessa tabela
+			as: "Unidade_moradia", // defini pois vinha com um nome estranho (m no final: Unidade_moradiam)
 		});
 		// um contrato pertence a um inquilino (usuario)
 		Contrato.belongsTo(models.Inquilino, {
