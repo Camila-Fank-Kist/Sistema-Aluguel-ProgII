@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
-import "./App.css";
+//import "./App.css";
 import { Button, Grid, Stack, Box, Typography } from "@mui/material";
 import axios from "axios";
 import Login from "./Login";
 import Imovel from "./Imovel";
-import { Routes, Route } from "react-router-dom";
-
+import { Routes, Route, Navigate } from "react-router-dom";
+import DetalharImovel from "./DetalharImovel";
+import SalvarImovel from "./SalvarImovel";
+import CadastroUsuario from "./CadastroUsuario";
 //import Contrato from "./Contrato";
 
 export default function App() {
@@ -13,6 +15,8 @@ export default function App() {
   const [userCPF, setUserCPF] = useState("");
   const [usuario, setUsuario] = useState(null);
   const [permissoes, setPermissoes] = useState([]);
+
+  console.log("Estado atual - isLoggedIn:", isLoggedIn, "userCPF:", userCPF);
 
   useEffect(() => {
     // Verifica se há token no localStorage ao carregar
@@ -31,6 +35,14 @@ export default function App() {
       }
     }
   }, []);
+
+  useEffect(() => {
+    // Busca permissões quando o usuário estiver logado e tiver cpf
+    if (isLoggedIn && userCPF) {
+      buscarPermissoesPorCPF(userCPF);
+    }
+  }, [isLoggedIn, userCPF]);
+  // Se estiver logado, mostra o conteúdo principal
 
   const buscarPermissoesPorCPF = async (cpf) => {
     try {
@@ -65,11 +77,11 @@ export default function App() {
     if (success) {
       // Se o username foi passado, usa ele, senão tenta decodificar do token
       if (username) {
-        setUserCPF(username);
+        setUserCPF(username.cpf);
         setUsuario(username);
         setIsLoggedIn(true);
       } else {
-        /*try {
+        try {
           const token = localStorage.getItem("token");
           if (token) {
             const payload = JSON.parse(atob(token.split(".")[1]));
@@ -79,8 +91,9 @@ export default function App() {
           }
         } catch (error) {
           console.error("Erro ao decodificar token:", error);
-        }*/
+        }
         setIsLoggedIn(false);
+        setUserCPF("");
         setUsuario(null);
         localStorage.removeItem("token");
       }
@@ -95,6 +108,8 @@ export default function App() {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setUserCPF("");
+    setUsuario(null);
+
     setPermissoes([]);
     localStorage.removeItem("token");
   };
@@ -113,45 +128,55 @@ export default function App() {
         minHeight="100vh"
       >
         <Stack spacing={2} alignItems="center">
-          <Typography variant="h4" component="h1">
-            Login
-          </Typography>
           <Login handleLogin={handleLogin} />
         </Stack>
       </Box>
     );
   }
-  if (isLoggedIn && usuario) {
+  /*if (isLoggedIn && usuario) {//camila, quando voce mexer, descomente isso
     return usuario.tipo_usuario === "locador" ? <Imovel /> : <Contrato />;
-  }
+  }*/
 
-  useEffect(() => {
-    // Busca permissões quando o usuário estiver logado e tiver cpf
-    if (isLoggedIn && userCPF) {
-      buscarPermissoesPorCPF(userCPF);
-    }
-  }, [isLoggedIn, userCPF]);
-  // Se estiver logado, mostra o conteúdo principal
   return (
-    <Grid container spacing={2}>
-      <Grid size={12}>
-        <Stack spacing={2}>
-          <Stack spacing={2} direction="row" alignItems="center">
-            <Typography variant="h6" sx={{ flexGrow: 1 }}>
-              Usuário: {userCPF}
-            </Typography>
-            <Button
-              variant="outlined"
-              color="error"
-              onClick={handleLogout}
-              style={{ width: "150px" }}
-            >
-              Logout
-            </Button>
-          </Stack>
-          <Stack>{podeVisualizarImoveis && <Imovel />}</Stack>
-        </Stack>
-      </Grid>
-    </Grid>
+    <Routes>
+      <Route path="/" element={<Imovel handleLogout={handleLogout} />} />
+      <Route
+        path="/novoUsuario"
+        element={<CadastroUsuario handleLogout={handleLogout} />}
+      />
+      <Route
+        path="/novoUsuario"
+        element={<CadastroUsuario handleLogout={handleLogout} />}
+      />
+      <Route
+        path="/imovel/:cpf"
+        element={<Imovel handleLogout={handleLogout} />}
+      />
+      <Route
+        path="/imovel/"
+        element={<SalvarImovel handleLogout={handleLogout} />}
+      />
+      <Route
+        path="/imovel/:cpf/:id"
+        element={<DetalharImovel handleLogout={handleLogout} />}
+      />
+      <Route
+        path="/imovel/:cpf/:id/editar"
+        element={<SalvarImovel handleLogout={handleLogout} />}
+      />
+    </Routes>
   );
+}
+
+{
+  /*     <Route path="/imovel/:cpf" element={<Imovel />} />
+      <Route path="/imovel/" element={<SalvarImovel />} />
+      <Route path="/imovel/:cpf/:id" element={<DetalharImovel />} />
+      <Route path="/imovel/:cpf/:id/editar" element={<SalvarImovel />} />
+      <Route path="/" element={<Imovel handleLogout={handleLogout} />} />
+      <Route path="/" element={<SalvarImovel handleLogout={handleLogout} />} />
+      <Route
+        path="/"
+        element={<DetalharImovel handleLogout={handleLogout} />}
+      />*/
 }

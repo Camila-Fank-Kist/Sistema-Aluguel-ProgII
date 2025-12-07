@@ -9,9 +9,8 @@ import {
   FormControl,
 } from "@mui/material";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
-export default function CadastroUsuario({ opcao }) {
+export default function CadastroUsuario({ opcao, voltar }) {
   const [nome, setNome] = useState("");
   const [cpf, setCPF] = useState("");
   const [dataNascimento, setDataNascimento] = useState("");
@@ -20,7 +19,16 @@ export default function CadastroUsuario({ opcao }) {
   const [trabalha, setTrabalha] = useState("");
   const [estuda, setEstuda] = useState("");
 
-  const navigate = useNavigate();
+  function cancelarCadastro() {
+    setNome("");
+    setCPF("");
+    setDataNascimento("");
+    setSenha("");
+    setTrabalha("");
+    setEstuda("");
+    setGenero("");
+    voltar();
+  }
 
   const enviarCadastro = async () => {
     try {
@@ -34,8 +42,10 @@ export default function CadastroUsuario({ opcao }) {
         estuda,
         opcao,
       });
+      console.log("Usuário cadastrado com sucesso!");
+      voltar();
+
       // Recarrega a página para voltar ao login
-      window.location.reload();
     } catch (error) {
       console.error("Erro ao cadastrar usuário:", error);
     }
@@ -43,7 +53,7 @@ export default function CadastroUsuario({ opcao }) {
 
   return opcao == "locador" ? (
     <Box
-      component="form"
+      //component="form"
       sx={{ "& .MuiTextField-root": { m: 1, width: "25ch" } }}
       noValidate
       autoComplete="off"
@@ -83,6 +93,7 @@ export default function CadastroUsuario({ opcao }) {
         <TextField
           required
           id="outlined-required"
+          type="password" //mudei
           label="Senha"
           value={senha}
           onChange={(event) => {
@@ -90,13 +101,30 @@ export default function CadastroUsuario({ opcao }) {
           }}
         />
       </form>
-      <Button variant="contained" onClick={enviarCadastro}>
+      <Button
+        variant="contained"
+        onClick={enviarCadastro}
+        disabled={
+          nome === "" || cpf === "" || dataNascimento === "" || senha === ""
+        }
+      >
         Enviar
+      </Button>
+      <Button
+        variant="outlined"
+        style={{
+          maxWidth: "100px",
+          minWidth: "100px",
+        }}
+        color="error"
+        onClick={cancelarCadastro}
+      >
+        Cancelar
       </Button>
     </Box>
   ) : (
     <Box
-      component="form"
+      //component="form"
       sx={{ "& .MuiTextField-root": { m: 1, width: "25ch" } }}
       noValidate
       autoComplete="off"
@@ -133,6 +161,10 @@ export default function CadastroUsuario({ opcao }) {
             shrink: true,
           }}
         />
+        <p>
+          Caso você também seja um locador no sistema, suas senhas deverão ser
+          diferentes
+        </p>
         <TextField
           required
           id="outlined-required"
@@ -182,8 +214,32 @@ export default function CadastroUsuario({ opcao }) {
           </Select>
         </FormControl>
       </form>
-      <Button variant="contained" onClick={enviarCadastro}>
+      <Button
+        variant="contained"
+        onClick={enviarCadastro}
+        disabled={
+          //aqui é estritamente igual pois, se deixar somente igual, trabalha e estuda só vão aceitar se for true
+          nome === "" ||
+          cpf === "" ||
+          dataNascimento === "" ||
+          senha === "" ||
+          genero === "" ||
+          trabalha === "" ||
+          estuda === ""
+        }
+      >
         Enviar
+      </Button>
+      <Button
+        variant="outlined"
+        style={{
+          maxWidth: "100px",
+          minWidth: "100px",
+        }}
+        color="error"
+        onClick={cancelarCadastro}
+      >
+        Cancelar
       </Button>
     </Box>
   );

@@ -1,172 +1,104 @@
+//Finalizar filtro e barra de pesquisa
 import axios from "axios";
 import {
   Card,
   CardContent,
   Typography,
   CardActionArea,
-  TextField,
   Box,
+  AppBar,
   Button,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
+  Toolbar,
+  CardActions,
+  TextField,
+  IconButton,
+  InputBase,
 } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid"; //porque é um pacote específico pra esse
-
+import SearchIcon from "@mui/icons-material/Search";
+import { useMemo } from "react";
+import { styled, alpha } from "@mui/material/styles";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 
-function InsercaoImovel({
-  novo_nome_imovel,
-  novo_regras_convivencia,
-  novo_publico,
-  novo_endereco_rua,
-  novo_endereco_numero,
-  novo_endereco_bairro,
-  novo_endereco_cidade,
-  novo_endereco_estado,
-  novo_endereco_pais,
-  novo_endereco_complemento,
-  novo_endereco_cep,
-  novo_id_tipo,
-  number,
-}) {
-  return (
-    <form>
-      <TextField
-        label="Nome do Imóvel"
-        fullWidth
-        value={novo_nome_imovel}
-        onChange={(e) => setNovo_nome_imovel(e.target.value)}
-      />
-      <TextField
-        label="Regras de convivência"
-        fullWidth
-        value={novo_regras_convivencia}
-        onChange={(e) => setNovoregras_convivencia(e.target.value)}
-      />
-      <TextField
-        label="Público"
-        fullWidth
-        value={novo_publico}
-        onChange={(e) => setNovo_publico(e.target.value)}
-      />
-      <TextField
-        label="Rua"
-        fullWidth
-        value={novo_endereco_rua}
-        onChange={(e) => setNovo_endereco_rua(e.target.value)}
-      />
-      <TextField
-        label="Número"
-        fullWidth
-        value={novo_endereco_numero}
-        onChange={(e) => setNovo_endereco_numero(e.target.value)}
-      />
-      <TextField
-        label="Bairro"
-        fullWidth
-        value={novo_endereco_bairro}
-        onChange={(e) => setNovo_endereco_bairro(e.target.value)}
-      />
-      <TextField
-        label="Complemento"
-        fullWidth
-        value={novo_endereco_complemento}
-        onChange={(e) => setNovo_endereco_complemento(e.target.value)}
-      />
-      <TextField
-        label="CEP"
-        fullWidth
-        value={novo_endereco_cep}
-        onChange={(e) => setNovo_endereco_cep(e.target.value)}
-      />
-      <TextField
-        label="Cidade"
-        fullWidth
-        value={novo_endereco_cidade}
-        onChange={(e) => setNovo_endereco_cidade(e.target.value)}
-      />
-      <TextField
-        label="Estado"
-        fullWidth
-        value={novo_endereco_estado}
-        onChange={(e) => setNovo_endereco_estado(e.target.value)}
-      />
-      <TextField
-        label="País"
-        fullWidth
-        value={novo_endereco_pais}
-        onChange={(e) => setNovo_endereco_pais(e.target.value)}
-      />
-      <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-        <InputLabel id="demo-select-small-label">Tipo</InputLabel>
-        <Select
-          labelId="demo-select-small-label"
-          id="demo-select-small"
-          value={novo_id_tipo}
-          label="Tipo"
-          onChange={(e) => setNovo_id_tipo(e.target.value)}
-        >
-          <MenuItem value="">
-            <em>Apartamento</em>
-          </MenuItem>
-          <MenuItem value={10}>Kitnet</MenuItem>
-          <MenuItem value={20}>Casa</MenuItem>
-          <MenuItem value={30}>Pensão</MenuItem>
-        </Select>
-      </FormControl>
-      <button variant="contained">
-        {/*onClick={proximaFuncao}*/}
-        {number === 1 ? "Cadastrar" : "Modificar"}
-      </button>
-    </form>
-  );
-}
+const Search = styled("div")(({ theme }) => ({
+  position: "relative",
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  "&:hover": {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginLeft: 0,
+  width: "400px",
+  [theme.breakpoints.up("sm")]: {
+    marginLeft: theme.spacing(1),
+    width: "auto",
+  },
+}));
 
-export default function Imovel() {
+const SearchIconWrapper = styled("div")(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: "100%",
+  position: "absolute",
+  pointerEvents: "none",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: "#ffffff",
+  fontWeight: "bold", // NEGRITO
+  width: "400px",
+  "& .MuiInputBase-input": {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create("width"),
+
+    "&::placeholder": {
+      color: "#ffffff",
+      opacity: 0.8,
+      fontWeight: "bold",
+    },
+
+    [theme.breakpoints.up("sm")]: {
+      width: "120ch",
+      "&:focus": {
+        width: "200ch",
+      },
+    },
+  },
+}));
+
+export default function Imovel({ handleLogout }) {
+  const navigate = useNavigate();
   const [imovel, setImovel] = useState([]);
-  const [novo_nome_imovel, setNovo_nome_imovel] = useState("");
-  const [novo_regras_convivencia, setNovoregras_convivencia] = useState("");
-  const [novo_publico, setNovo_publico] = useState("");
-  const [novo_endereco_rua, setNovo_endereco_rua] = useState("");
-  const [novo_endereco_bairro, setNovo_endereco_bairro] = useState("");
-  const [novo_endereco_numero, setNovo_endereco_numero] = useState("");
-  const [novo_endereco_cidade, setNovo_endereco_cidade] = useState("");
-  const [novo_endereco_estado, setNovo_endereco_estado] = useState("");
-  const [novo_endereco_pais, setNovo_endereco_pais] = useState("");
-  const [novo_endereco_cep, setNovo_endereco_cep] = useState("");
-  const [novo_endereco_complemento, setNovo_endereco_complemento] =
-    useState("");
-  const [novo_id_tipo, setNovo_id_tipo] = useState([]);
-  const [number, setnumber] = useState("");
-  const [id_imovel, setid_imovel] = useState("");
-  //const [proximaFuncao, setproximaFuncao] = useState("");
+  const [selecaoFiltro, setSelecaoFiltro] = useState("");
+  const [barraPesquisa, setBarraPesquisa] = useState("");
+  const cpf = localStorage.getItem("cpf"); // garante que pega o CPF logado
 
-  const columns = [
-    { field: "id", headerName: "id", width: 100 },
-    {
-      field: "regras_convivencia",
-      headerName: "Regras de Convivência",
-      width: 500,
-    },
-    { field: "publico", headerName: "Público", width: 400 },
-    { field: "endereco_rua", headerName: "Rua do imóvel", width: 400 },
-    { field: "endereco_bairro", headerName: "Bairro do imóvel", width: 400 },
-    { field: "endereco_numero", headerName: "Número do imóvel", width: 400 },
-    { field: "endereco_cidade", headerName: "Cidade do imóvel", width: 400 },
-    { field: "endereco_estado", headerName: "Estado do imóvel", width: 400 },
-    { field: "endereco_pais", headerName: "País do imóvel", width: 400 },
-    { field: "endereco_cep", headerName: "CEP do imóvel", width: 400 },
-    { field: "endereco_complemento", headerName: "Complemento", width: 400 },
-    { field: "id_tipo", headerName: "Tipo do imóvel", width: 400 },
-    {
-      field: "locador_cpf",
-      headerName: "CPF do locador do imóvel",
-      width: 400,
-    },
-    { field: "nome_imovel", headerName: "Nome do imóvel", width: 400 },
+  const tiposDeImovel = {
+    1: "Kitnet",
+    2: "Casa",
+    3: "Pensão",
+    4: "Apartamento",
+  };
+
+  const filtro_publico = [
+    { title: "Feminino" },
+    { title: "Masculino" },
+    { title: "Familiar" },
+    { title: "Estudantes" },
+    { title: "Casal" },
+    { title: "Solteiros" },
   ];
+
+  const filterOptions = createFilterOptions({
+    matchFrom: "start",
+    stringify: (option) => option.title,
+  });
 
   useEffect(() => {
     buscarImovel();
@@ -174,171 +106,176 @@ export default function Imovel() {
 
   const buscarImovel = async () => {
     try {
-      const request = await axios.get("http://localhost:3002/imovel/todos");
-      setImovel(request.data.imovel);
+      const request = await axios.get("http://localhost:3002/imovel/" + cpf);
+      setImovel(request.data);
+      console.log("resposta:", request); // Debug
+      console.log("dados:", request.data); // Debug
     } catch (error) {
       console.log(error);
     }
   };
 
-  function mostrarImoveis() {
-    buscarImovel();
-    return (
-      <Card sx={{ maxWidth: 345 }}>
-        <CardActionArea>
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="div">
-              Pensão das flores
-            </Typography>
-            <Typography variant="body2" sx={{ color: "text.secondary" }}>
-              Rua: {imovel.rua}; Número: {imovel.numero}; Bairro:{" "}
-              {imovel.bairro}; Cidade: {imovel.cidade}; Estado: {imovel.estado};
-              País:{imovel.pais}; Tipo: {imovel.id_tipo};
-            </Typography>
-          </CardContent>
-        </CardActionArea>
-      </Card>
-    );
-  }
-
-  function detalharImovel() {
-    return (
-      <Card sx={{ maxWidth: 345 }}>
-        <CardActionArea>
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="div">
-              Pensão das flores
-            </Typography>
-            <Typography variant="body2" sx={{ color: "text.secondary" }}>
-              Rua: {imovel.endereco_rua}; Número: {imovel.endereco_numero};
-              Bairro: {imovel.endereco_bairro}; Cidade: {imovel.endereco_cidade}
-              ; Estado: {imovel.endereco_estado}; País:{imovel.endereco_pais};
-              CEP: {imovel.endereco_cep}; Complemento:{" "}
-              {imovel.endereco_complemento}Tipo: {imovel.id_tipo}; Regras de
-              Convivência: {imovel.regras_convivencia}; Público:{" "}
-              {imovel.publico}
-            </Typography>
-          </CardContent>
-        </CardActionArea>
-      </Card>
-    );
-  }
-
-  async function criarImovel() {
+  function criandoImoveis() {
     try {
-      const response = await axios.post("http://localhost:3002/imovel/", {
-        //link do post no Insomnia
-        //insere no backend os dados do novo cursos cadatrado, como foi feito no Insomnia
-        nome_imovel: novo_nome_imovel,
-        regras_convivencia: novo_regras_convivencia,
-        publico: novo_publico,
-        endereco_rua: novo_endereco_rua,
-        endereco_numero: novo_endereco_numero,
-        endereco_bairro: novo_endereco_bairro,
-        endereco_cidade: novo_endereco_cidade,
-        endereco_estado: novo_endereco_estado,
-        endereco_pais: novo_endereco_pais,
-        endereco_cep: novo_endereco_cep,
-        endereco_complemento: novo_endereco_complemento,
+      navigate("/imovel/", {
+        state: { cpf, number: 1, alerta: "Imóvel cadastrado com sucesso!" },
       });
-      //console.log(response.data);
-
-      // Limpar os campos inseridos com o novo imóvel na tela
-      setNovo_nome_imovel("");
-      setNovoregras_convivencia("");
-      setNovo_endereco_numero("");
-      setNovo_endereco_rua("");
-      setNovo_publico("");
-      setNovo_endereco_bairro("");
-      setNovo_endereco_cep("");
-      setNovo_endereco_complemento("");
-      setNovo_endereco_cidade("");
-      setNovo_endereco_estado("");
-      setNovo_endereco_pais("");
-      setNovo_id_tipo("");
-    } catch (error) {
-      //em caso de erro
-      console.log("Erro ao inserir curso:", error);
+      console.log("mimi");
+      console.log(cpf);
+    } catch {
+      console.log("Falha no botão de criação de imóvel");
     }
   }
 
-  async function editarImovel() {
+  function detalhandoImoveis(imovel_detalhar) {
     try {
-      const response = await axios.put(
-        "http://localhost:3002/imovel/" + id_imovel, //o programa entende que se trata de um texto + variável
-        {
-          //link do Insomnia para o put
-          //inserindo no backend a modificação recebida
-          nome_imovel: novo_nome_imovel,
-          regras_convivencia: novo_regras_convivencia,
-          publico: novo_publico,
-          endereco_rua: novo_endereco_rua,
-          endereco_numero: novo_endereco_numero,
-          endereco_bairro: novo_endereco_bairro,
-          endereco_cidade: novo_endereco_cidade,
-          endereco_estado: novo_endereco_estado,
-          endereco_pais: novo_endereco_pais,
-          endereco_cep: novo_endereco_cep,
-          endereco_complemento: novo_endereco_complemento,
-        }
-      );
-      // Limpar os campos inseridos com o novo imóvel na tela
-      setNovo_nome_imovel("");
-      setNovoregras_convivencia("");
-      setNovo_endereco_numero("");
-      setNovo_endereco_rua("");
-      setNovo_publico("");
-      setNovo_endereco_bairro("");
-      setNovo_endereco_cep("");
-      setNovo_endereco_complemento("");
-      setNovo_endereco_cidade("");
-      setNovo_endereco_estado("");
-      setNovo_endereco_pais("");
-      setNovo_id_tipo("");
-    } catch (error) {
-      //em caso de erro
-      console.log("Erro ao modificar imóvel:", error);
+      navigate(`/imovel/${imovel_detalhar.locador_cpf}/${imovel_detalhar.id}`, {
+        state: { imovel_detalhar, cpf },
+      });
+      console.log("toto");
+      console.log(cpf);
+    } catch {
+      console.log("Falha no botão de detalhação de imóvel");
     }
   }
 
-  async function deletarImovel() {
-    try {
-      const response = await axios.delete(
-        "http://localhost:3002/imovel/" + id_imovel //o programa entende que se trata de um texto + variável //link do Insomnia para o delete
-      );
-      // Limpar o campo de inserção do id do curso na tela
-      setid_imovel("");
-    } catch (error) {
-      //em caso de erro
-      console.log("Erro ao excluir imóvel:", error);
+  const imoveisFiltrados = useMemo(() => {
+    let resultado = imovel;
+
+    // Filtro por público
+    if (selecaoFiltro) {
+      resultado = resultado.filter((item) => item.publico === selecaoFiltro);
     }
-  }
+
+    // Filtro por barra de pesquisa
+    if (barraPesquisa) {
+      resultado = resultado.filter((item) =>
+        item.nome_imovel.toLowerCase().includes(barraPesquisa.toLowerCase())
+      );
+    }
+
+    return resultado;
+  }, [imovel, selecaoFiltro, barraPesquisa]);
 
   return (
-    <Box sx={{ height: 400, width: 1000 }}>
-      <DataGrid rows={imovel} columns={columns} />
-      <Box>
-        <Button variant="contained">Criar Imóvel</Button>{" "}
-        {
-          <InsercaoImovel
-            number={1}
-            novo_nome_imovel={novo_nome_imovel}
-            novo_regras_convivencia={novo_regras_convivencia}
-            novo_publico={novo_publico}
-            novo_endereco_rua={novo_endereco_rua}
-            novo_endereco_bairro={novo_endereco_bairro}
-            novo_endereco_numero={novo_endereco_numero}
-            novo_endereco_cidade={novo_endereco_cidade}
-            novo_endereco_estado={novo_endereco_estado}
-            novo_endereco_pais={novo_endereco_pais}
-            novo_endereco_cep={novo_endereco_cep}
-            novo_endereco_complemento={novo_endereco_complemento}
-            novo_id_tipo={novo_id_tipo}
-            //proximaFuncao={criarImovel}
-          />
-        }
-      </Box>
-      <Button variant="contained">Deletar imóvel</Button>
-    </Box>
+    <>
+      <AppBar
+        position="static"
+        sx={{
+          backgroundColor: "#89c56eff",
+          paddingY: 2,
+          width: "100%",
+        }}
+      >
+        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+            Sua casa, sua vida
+          </Typography>
+
+          <Box sx={{ mx: 3 }}>
+            <Autocomplete
+              options={filtro_publico}
+              getOptionLabel={(option) => option.title}
+              filterOptions={filterOptions}
+              sx={{ width: 300 }}
+              value={
+                filtro_publico.find((event) => event.title === selecaoFiltro) ||
+                null
+              }
+              onChange={(event, newValue) => {
+                setSelecaoFiltro(newValue ? newValue.title : "");
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Público"
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        borderColor: "white", // cor padrão
+                      },
+                    },
+                    "& .MuiInputLabel-root": {
+                      color: "white", //cor de Público
+                    },
+                  }}
+                />
+              )}
+            />
+          </Box>
+
+          <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Nome do Imóvel"
+                inputProps={{ "aria-label": "search" }}
+                value={barraPesquisa}
+                onChange={(event) => setBarraPesquisa(event.target.value)}
+              />
+            </Search>
+          </Box>
+
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Button
+              variant="outlined"
+              startIcon={<AddCircleIcon />}
+              sx={{ color: "#fff", borderColor: "#fff" }}
+              onClick={criandoImoveis}
+            >
+              Adicionar Imóvel
+            </Button>
+
+            <Button variant="outlined" color="error" onClick={handleLogout}>
+              Sair
+            </Button>
+          </Box>
+        </Toolbar>
+      </AppBar>
+      {/*Lista de Imóveis*/}
+
+      {/* Lista de imóveis */}
+      {!imoveisFiltrados || imoveisFiltrados.length === 0 ? (
+        <Typography variant="h6" sx={{ mt: 3, textAlign: "center" }}>
+          {imovel.length === 0
+            ? "Nenhum imóvel cadastrado ainda."
+            : "Nenhum imóvel encontrado com o filtro aplicado"}
+        </Typography>
+      ) : (
+        <Box sx={{ p: 2, display: "flex", gap: 2, flexWrap: "wrap" }}>
+          {imoveisFiltrados.map((item) => (
+            <Card key={item.id} sx={{ width: 300 }}>
+              <CardActionArea>
+                <CardContent>
+                  <Typography gutterBottom variant="h5">
+                    {item.nome_imovel}
+                  </Typography>
+
+                  <Typography variant="body2" color="textSecondary">
+                    Rua: {item.endereco_rua}
+                    <br />
+                    Número: {item.endereco_numero}
+                    <br />
+                    Bairro: {item.endereco_bairro}
+                    <br />
+                    Cidade: {item.endereco_cidade}
+                    <br />
+                    Tipo: {tiposDeImovel[item.id_tipo]}
+                  </Typography>
+                </CardContent>
+              </CardActionArea>
+
+              <CardActions>
+                <Button size="small" onClick={() => detalhandoImoveis(item)}>
+                  Detalhar
+                </Button>
+              </CardActions>
+            </Card>
+          ))}
+        </Box>
+      )}
+    </>
   );
 }
