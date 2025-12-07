@@ -1,0 +1,684 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2025-12-06T00:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2023.5.8",
+  "resources": [
+    {
+      "_id": "wrk_sistema_aluguel",
+      "parentId": null,
+      "modified": 1733443200000,
+      "created": 1733443200000,
+      "name": "Sistema Aluguel - Testes",
+      "description": "Coleção de testes para as rotas de Contrato e Unidade de Moradia",
+      "scope": "collection",
+      "_type": "workspace"
+    },
+    {
+      "_id": "env_base",
+      "parentId": "wrk_sistema_aluguel",
+      "modified": 1733443200000,
+      "created": 1733443200000,
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:3002",
+        "token_locador": "COLE_O_TOKEN_DO_LOCADOR_AQUI",
+        "token_inquilino": "COLE_O_TOKEN_DO_INQUILINO_AQUI",
+        "locador_cpf": "12345678901",
+        "locador_senha": "senha123",
+        "inquilino_cpf": "98765432100",
+        "inquilino_senha": "senha123",
+        "id_imovel": 1,
+        "id_unidade": 1,
+        "id_contrato": 1,
+        "id_categoria_um": 1
+      },
+      "dataPropertyOrder": {
+        "&": ["base_url", "token_locador", "token_inquilino", "locador_cpf", "locador_senha", "inquilino_cpf", "inquilino_senha", "id_imovel", "id_unidade", "id_contrato", "id_categoria_um"]
+      },
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1733443200000,
+      "_type": "environment"
+    },
+    {
+      "_id": "fld_auth",
+      "parentId": "wrk_sistema_aluguel",
+      "modified": 1733443200000,
+      "created": 1733443200000,
+      "name": "1. Autenticação",
+      "description": "Rotas de autenticação - Execute primeiro para obter os tokens",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1733443300000,
+      "_type": "request_group"
+    },
+    {
+      "_id": "fld_unidade",
+      "parentId": "wrk_sistema_aluguel",
+      "modified": 1733443200000,
+      "created": 1733443200000,
+      "name": "2. Unidade de Moradia",
+      "description": "Rotas de Unidade de Moradia",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1733443200000,
+      "_type": "request_group"
+    },
+    {
+      "_id": "fld_contrato",
+      "parentId": "wrk_sistema_aluguel",
+      "modified": 1733443200000,
+      "created": 1733443200000,
+      "name": "3. Contrato",
+      "description": "Rotas de Contrato",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1733443100000,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_login_locador",
+      "parentId": "fld_auth",
+      "modified": 1733443200000,
+      "created": 1733443200000,
+      "url": "{{ _.base_url }}/login",
+      "name": "1.1 Login Locador",
+      "description": "Fazer login como locador. Copie o token da resposta e cole na variável 'token_locador' do ambiente.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"username\": \"{{ _.locador_cpf }}\",\n  \"passwd\": \"{{ _.locador_senha }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1733443300000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_login_inquilino",
+      "parentId": "fld_auth",
+      "modified": 1733443200000,
+      "created": 1733443200000,
+      "url": "{{ _.base_url }}/login",
+      "name": "1.2 Login Inquilino",
+      "description": "Fazer login como inquilino. Copie o token da resposta e cole na variável 'token_inquilino' do ambiente.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"username\": \"{{ _.inquilino_cpf }}\",\n  \"passwd\": \"{{ _.inquilino_senha }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1733443200000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_novo_usuario",
+      "parentId": "fld_auth",
+      "modified": 1733443200000,
+      "created": 1733443200000,
+      "url": "{{ _.base_url }}/novoUsuario",
+      "name": "1.3 Criar Novo Usuário",
+      "description": "Cria um novo usuário no sistema.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"username\": \"11122233344\",\n  \"passwd\": \"senha123\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1733443100000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_um_publico_geral",
+      "parentId": "fld_unidade",
+      "modified": 1733443200000,
+      "created": 1733443200000,
+      "url": "{{ _.base_url }}/unidade-moradia/publico-geral",
+      "name": "2.1 GET Listar Unidades (Público)",
+      "description": "Lista todas as unidades para o público geral. SEM AUTENTICAÇÃO. Habilite os filtros conforme necessário.",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "disponivel",
+          "value": "true",
+          "disabled": true,
+          "description": "Filtrar por disponibilidade (true/false)"
+        },
+        {
+          "name": "id_categoria_um",
+          "value": "{{ _.id_categoria_um }}",
+          "disabled": true,
+          "description": "Filtrar por categoria"
+        },
+        {
+          "name": "preco_min",
+          "value": "500",
+          "disabled": true,
+          "description": "Preço mínimo do aluguel"
+        },
+        {
+          "name": "preco_max",
+          "value": "2000",
+          "disabled": true,
+          "description": "Preço máximo do aluguel"
+        },
+        {
+          "name": "nome_um",
+          "value": "quarto",
+          "disabled": true,
+          "description": "Busca parcial pelo nome"
+        },
+        {
+          "name": "cidade",
+          "value": "Chapecó",
+          "disabled": true,
+          "description": "Filtrar por cidade"
+        },
+        {
+          "name": "publico",
+          "value": "estudantes",
+          "disabled": true,
+          "description": "Filtrar por público alvo"
+        }
+      ],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1733443200000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_um_locador",
+      "parentId": "fld_unidade",
+      "modified": 1733443200000,
+      "created": 1733443200000,
+      "url": "{{ _.base_url }}/unidade-moradia/locador",
+      "name": "2.2 GET Listar Unidades do Locador",
+      "description": "Lista as unidades do locador autenticado. REQUER TOKEN.",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "disponivel",
+          "value": "true",
+          "disabled": true,
+          "description": "Filtrar por disponibilidade"
+        },
+        {
+          "name": "id_imovel",
+          "value": "{{ _.id_imovel }}",
+          "disabled": true,
+          "description": "Filtrar por imóvel"
+        },
+        {
+          "name": "id_categoria_um",
+          "value": "{{ _.id_categoria_um }}",
+          "disabled": true,
+          "description": "Filtrar por categoria"
+        },
+        {
+          "name": "nome_um",
+          "value": "quarto",
+          "disabled": true,
+          "description": "Busca parcial pelo nome"
+        }
+      ],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token_locador }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1733443100000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_um_por_id",
+      "parentId": "fld_unidade",
+      "modified": 1733443200000,
+      "created": 1733443200000,
+      "url": "{{ _.base_url }}/unidade-moradia/{{ _.id_unidade }}",
+      "name": "2.3 GET Obter Unidade por ID",
+      "description": "Retorna detalhes de uma unidade específica. SEM AUTENTICAÇÃO.",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1733443000000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_um_criar",
+      "parentId": "fld_unidade",
+      "modified": 1733443200000,
+      "created": 1733443200000,
+      "url": "{{ _.base_url }}/unidade-moradia",
+      "name": "2.4 POST Criar Unidade",
+      "description": "Cria uma nova unidade de moradia. REQUER TOKEN DE LOCADOR.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome_um\": \"Quarto 101\",\n  \"preco_aluguel\": 800.00,\n  \"descricao\": \"Quarto amplo com banheiro privativo\",\n  \"id_imovel\": {{ _.id_imovel }},\n  \"id_categoria_um\": {{ _.id_categoria_um }},\n  \"completo\": true\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token_locador }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1733442900000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_um_atualizar",
+      "parentId": "fld_unidade",
+      "modified": 1733443200000,
+      "created": 1733443200000,
+      "url": "{{ _.base_url }}/unidade-moradia/{{ _.id_unidade }}",
+      "name": "2.5 PUT Atualizar Unidade",
+      "description": "Atualiza uma unidade existente. REQUER TOKEN DE LOCADOR.",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome_um\": \"Quarto 101 - Atualizado\",\n  \"preco_aluguel\": 850.00,\n  \"descricao\": \"Quarto amplo com banheiro privativo e ar condicionado\",\n  \"id_imovel\": {{ _.id_imovel }},\n  \"id_categoria_um\": {{ _.id_categoria_um }},\n  \"completo\": true\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token_locador }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1733442800000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_um_disponibilidade",
+      "parentId": "fld_unidade",
+      "modified": 1733443200000,
+      "created": 1733443200000,
+      "url": "{{ _.base_url }}/unidade-moradia/{{ _.id_unidade }}/disponivel",
+      "name": "2.6 PATCH Mudar Disponibilidade",
+      "description": "Alterna a disponibilidade da unidade (toggle). REQUER TOKEN DE LOCADOR. Não funciona se houver contrato ativo.",
+      "method": "PATCH",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token_locador }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1733442700000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_um_contratos",
+      "parentId": "fld_unidade",
+      "modified": 1733443200000,
+      "created": 1733443200000,
+      "url": "{{ _.base_url }}/unidade-moradia/{{ _.id_unidade }}/contratos",
+      "name": "2.7 GET Listar Contratos da Unidade",
+      "description": "Lista todos os contratos (ativos e inativos) de uma unidade. REQUER TOKEN DE LOCADOR.",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token_locador }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1733442600000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_um_deletar",
+      "parentId": "fld_unidade",
+      "modified": 1733443200000,
+      "created": 1733443200000,
+      "url": "{{ _.base_url }}/unidade-moradia/{{ _.id_unidade }}",
+      "name": "2.8 DELETE Deletar Unidade",
+      "description": "Remove uma unidade. REQUER TOKEN DE LOCADOR. ⚠️ CUIDADO: Não funciona se houver contratos associados!",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token_locador }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1733442500000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_contrato_locador",
+      "parentId": "fld_contrato",
+      "modified": 1733443200000,
+      "created": 1733443200000,
+      "url": "{{ _.base_url }}/contrato/locador",
+      "name": "3.1 GET Listar Contratos do Locador",
+      "description": "Lista todos os contratos das unidades do locador autenticado. REQUER TOKEN.",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "contrato_ativo",
+          "value": "true",
+          "disabled": true,
+          "description": "Filtrar por status (true/false)"
+        },
+        {
+          "name": "id_um",
+          "value": "{{ _.id_unidade }}",
+          "disabled": true,
+          "description": "Filtrar por unidade"
+        },
+        {
+          "name": "inquilino_cpf",
+          "value": "{{ _.inquilino_cpf }}",
+          "disabled": true,
+          "description": "Filtrar por inquilino"
+        }
+      ],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token_locador }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1733443200000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_contrato_inquilino",
+      "parentId": "fld_contrato",
+      "modified": 1733443200000,
+      "created": 1733443200000,
+      "url": "{{ _.base_url }}/contrato/inquilino",
+      "name": "3.2 GET Listar Contratos do Inquilino",
+      "description": "Lista todos os contratos do inquilino autenticado. REQUER TOKEN DE INQUILINO.",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "contrato_ativo",
+          "value": "true",
+          "disabled": true,
+          "description": "Filtrar por status (true/false)"
+        },
+        {
+          "name": "id_um",
+          "value": "{{ _.id_unidade }}",
+          "disabled": true,
+          "description": "Filtrar por unidade"
+        }
+      ],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token_inquilino }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1733443100000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_contrato_por_id",
+      "parentId": "fld_contrato",
+      "modified": 1733443200000,
+      "created": 1733443200000,
+      "url": "{{ _.base_url }}/contrato/{{ _.id_contrato }}",
+      "name": "3.3 GET Obter Contrato por ID",
+      "description": "Retorna detalhes de um contrato. REQUER TOKEN (locador dono ou inquilino do contrato).",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token_locador }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1733443000000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_contrato_criar",
+      "parentId": "fld_contrato",
+      "modified": 1733443200000,
+      "created": 1733443200000,
+      "url": "{{ _.base_url }}/contrato",
+      "name": "3.4 POST Criar Contrato",
+      "description": "Cria um novo contrato. REQUER TOKEN DE LOCADOR. A unidade deve estar DISPONÍVEL.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"id_um\": {{ _.id_unidade }},\n  \"inquilino_cpf\": \"{{ _.inquilino_cpf }}\",\n  \"preco\": 800.00\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token_locador }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1733442900000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_contrato_atualizar",
+      "parentId": "fld_contrato",
+      "modified": 1733443200000,
+      "created": 1733443200000,
+      "url": "{{ _.base_url }}/contrato/{{ _.id_contrato }}",
+      "name": "3.5 PUT Atualizar Contrato",
+      "description": "Atualiza um contrato ATIVO. REQUER TOKEN DE LOCADOR. Não pode alterar data_inicio, data_fim ou contrato_ativo.",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"preco\": 850.00,\n  \"pdf\": \"caminho/para/contrato.pdf\",\n  \"inquilino_cpf\": \"{{ _.inquilino_cpf }}\",\n  \"id_um\": {{ _.id_unidade }}\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token_locador }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1733442800000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_contrato_encerrar",
+      "parentId": "fld_contrato",
+      "modified": 1733443200000,
+      "created": 1733443200000,
+      "url": "{{ _.base_url }}/contrato/{{ _.id_contrato }}/encerrar",
+      "name": "3.6 POST Encerrar Contrato",
+      "description": "Encerra um contrato ativo (contrato_ativo=false, data_fim=agora). REQUER TOKEN DE LOCADOR. A unidade volta a ficar disponível.",
+      "method": "POST",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token_locador }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1733442700000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    }
+  ]
+}

@@ -17,13 +17,13 @@ const configureLocalStrategy = () => {
       async (username, password, done) => {
         try {
           // busca o usuário no banco de dados usando Sequelize
-          const user = await model.Locador.findOne({
+          let user = await model.Locador.findOne({
             where: { cpf: username },
           });
 
-          if (user == NULL) {
+          if (user == null) {
             //se o cpf não corresponde ao do locador, verifico se é do inquilino
-            const user = await model.Inquilino.findOne({
+            user = await model.Inquilino.findOne({
               where: { cpf: username },
             });
           }
@@ -62,10 +62,10 @@ const configureJwtStrategy = () => {
       },
       async (payload, done) => {
         try {
-          const user = await model.Locador.findByPk(payload.username);
+          let user = await model.Locador.findByPk(payload.username);
 
-          if (user == NULL) {
-            const user = await model.Inquilino.findByPk(payload.username);
+          if (user == null) {
+            user = await model.Inquilino.findByPk(payload.username);
           }
 
           if (user) {
@@ -99,23 +99,22 @@ const configureSerialization = () => {
   });
 };
 
-// Função para criar novo usuário
+// Função para criar novo usuário (Locador)
 const criarNovoUsuario = async (userData) => {
   const saltRounds = 10;
   const { username, passwd, nome } = userData;
   const userCPF = username;
-  //const userName = nome || userEmael; // Usa o email como nome padrão se não fornecido
+  const userName = nome || "Novo Locador"; // Nome padrão se não fornecido
   const salt = bcrypt.genSaltSync(saltRounds);
   const hashedPasswd = bcrypt.hashSync(passwd, salt);
 
-  await model.Usuario.create({
+  await model.Locador.create({
     cpf: userCPF,
-    //nome: userName,
+    nome: userName,
     senha: hashedPasswd,
   });
 
-  //return { email: userEmail, nome: userName };
-  return { cpf: userCPF };
+  return { cpf: userCPF, nome: userName };
 };
 
 // Função para gerar token JWT
