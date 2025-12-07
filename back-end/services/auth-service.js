@@ -16,16 +16,22 @@ const configureLocalStrategy = () => {
       },
       async (username, password, done) => {
         try {
-          // busca o usuário no banco de dados usando Sequelize
+          // busca o usuário no banco de dados usando Sequelize. É let porque pode mudar de valor
           let user = await model.Locador.findOne({
             where: { cpf: username },
           });
 
-          if (user == null) {
+          if (user) {
+            user.tipo_usuario = "locador"; //entra aqui se user é o locador
+          } else {
             //se o cpf não corresponde ao do locador, verifico se é do inquilino
             user = await model.Inquilino.findOne({
               where: { cpf: username },
             });
+
+            if (user) {
+              user.tipo_usuario = "inquilino";
+            }
           }
 
           // se não encontrou, retorna erro
@@ -62,7 +68,7 @@ const configureJwtStrategy = () => {
       },
       async (payload, done) => {
         try {
-          let user = await model.Locador.findByPk(payload.username);
+          user = await model.Locador.findByPk(payload.username);
 
           if (user == null) {
             user = await model.Inquilino.findByPk(payload.username);
@@ -102,19 +108,38 @@ const configureSerialization = () => {
 // Função para criar novo usuário (Locador)
 const criarNovoUsuario = async (userData) => {
   const saltRounds = 10;
-  const { username, passwd, nome } = userData;
-  const userCPF = username;
-  const userName = nome || "Novo Locador"; // Nome padrão se não fornecido
+  const { cpf, senha, opcao, data_nascimento, nome, genero, trabalha, estuda } =
+    userData;
   const salt = bcrypt.genSaltSync(saltRounds);
-  const hashedPasswd = bcrypt.hashSync(passwd, salt);
+  const hashedPasswd = bcrypt.hashSync(senha, salt);
 
-  await model.Locador.create({
+  /*await model.Usuario.create({
     cpf: userCPF,
     nome: userName,
     senha: hashedPasswd,
-  });
+  });*/
 
-  return { cpf: userCPF, nome: userName };
+  if (opcao == "locador") {
+    await model.Locador.create({
+      cpf,
+      nome,
+      data_nascimento,
+      senha: hashedPasswd,
+    });
+  } else {
+    await model.Inquilino.create({
+      cpf,
+      nome,
+      data_nascimento,
+      senha: hashedPasswd,
+      trabalha,
+      estuda,
+      genero,
+    });
+  }
+
+  //return { email: userEmail, nome: userName };
+  return { cpf };
 };
 
 // Função para gerar token JWT

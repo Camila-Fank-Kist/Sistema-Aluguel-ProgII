@@ -3,11 +3,16 @@ import "./App.css";
 import { Button, Grid, Stack, Box, Typography } from "@mui/material";
 import axios from "axios";
 import Login from "./Login";
+import Imovel from "./Imovel";
+import { Routes, Route } from "react-router-dom";
+
+//import Contrato from "./Contrato";
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userCPF, setUserCPF] = useState("");
-  const [exibeLocador, setExibeLocador] = useState(false); //parei aqui
+  const [usuario, setUsuario] = useState(null);
+  const [permissoes, setPermissoes] = useState([]);
 
   useEffect(() => {
     // Verifica se há token no localStorage ao carregar
@@ -27,24 +32,28 @@ export default function App() {
     }
   }, []);
 
-  useEffect(() => {
-    // Busca permissões quando o usuário estiver logado e tiver cpf
-    if (isLoggedIn && userCPF) {
-      buscarPermissoesPorCPF(userCPF);
-    }
-  }, [isLoggedIn, userCPF]);
-
   const buscarPermissoesPorCPF = async (cpf) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(
-        `http://localhost:3002/usuario_permissao/usuario/${cpf}`,
+      let response = await axios.get(
+        `http://localhost:3002/locador_permissao/locador/${cpf}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
+
+      if (response === null) {
+        response = await axios.get(
+          `http://localhost:3002/inquilino_permissao/inquilino/${cpf}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      }
       console.log(response.data.permissoes);
       setPermissoes(response.data.permissoes);
     } catch (error) {
@@ -57,8 +66,10 @@ export default function App() {
       // Se o username foi passado, usa ele, senão tenta decodificar do token
       if (username) {
         setUserCPF(username);
+        setUsuario(username);
+        setIsLoggedIn(true);
       } else {
-        try {
+        /*try {
           const token = localStorage.getItem("token");
           if (token) {
             const payload = JSON.parse(atob(token.split(".")[1]));
@@ -68,7 +79,10 @@ export default function App() {
           }
         } catch (error) {
           console.error("Erro ao decodificar token:", error);
-        }
+        }*/
+        setIsLoggedIn(false);
+        setUsuario(null);
+        localStorage.removeItem("token");
       }
       setIsLoggedIn(true);
     } else {
@@ -84,6 +98,10 @@ export default function App() {
     setPermissoes([]);
     localStorage.removeItem("token");
   };
+
+  const podeVisualizarImoveis = permissoes.some(
+    (permissao) => permissao.Permissao.descricao === "TELA_LOCADOR"
+  );
 
   // Se não estiver logado, mostra a tela de login
   if (!isLoggedIn) {
@@ -103,6 +121,16 @@ export default function App() {
       </Box>
     );
   }
+  if (isLoggedIn && usuario) {
+    return usuario.tipo_usuario === "locador" ? <Imovel /> : <Contrato />;
+  }
+
+  useEffect(() => {
+    // Busca permissões quando o usuário estiver logado e tiver cpf
+    if (isLoggedIn && userCPF) {
+      buscarPermissoesPorCPF(userCPF);
+    }
+  }, [isLoggedIn, userCPF]);
   // Se estiver logado, mostra o conteúdo principal
   return (
     <Grid container spacing={2}>
@@ -121,6 +149,7 @@ export default function App() {
               Logout
             </Button>
           </Stack>
+          <Stack>{podeVisualizarImoveis && <Imovel />}</Stack>
         </Stack>
       </Grid>
     </Grid>
