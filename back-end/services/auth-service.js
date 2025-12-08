@@ -288,6 +288,48 @@ const requirePermissao = (descricaoPermissao) => {
   ];
 };
 
+// o express tem uma fila de funções (middlewares), e cada função pode passar para a próxima (enviando/devolvendo next()) ou encerrar a requisição (enviando uma resposta)
+
+// Middleware para verificar se o usuário é locador
+const verificarSeIsLocador = (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Usuário não autenticado." });
+    }
+    if (req.user.tipo_usuario !== "locador") {
+      return res
+        .status(403)
+        .json({
+          message: "Acesso negado. Apenas locadores podem acessar essa rota.",
+        });
+    }
+    return next(); // continua para a próxima função
+  } catch (error) {
+    console.error("Erro ao verificar tipo de usuário:", error);
+    return res.status(500).json({ message: "Erro interno do servidor." });
+  }
+};
+
+// Middleware para verificar se o usuário é inquilino
+const verificarSeIsInquilino = (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Usuário não autenticado." });
+    }
+    if (req.user.tipo_usuario !== "inquilino") {
+      return res
+        .status(403)
+        .json({
+          message: "Acesso negado. Apenas inquilinos podem acessar essa rota.",
+        });
+    }
+    return next(); // continua para a próxima função
+  } catch (error) {
+    console.error("Erro ao verificar tipo de usuário:", error);
+    return res.status(500).json({ message: "Erro interno do servidor." });
+  }
+};
+
 module.exports = {
   configureLocalStrategy,
   configureJwtStrategy,
@@ -299,4 +341,6 @@ module.exports = {
   obterPermissoesUsuario,
   verificarPermissaoMiddleware,
   requirePermissao,
+  verificarSeIsLocador,
+  verificarSeIsInquilino,
 };

@@ -25,12 +25,5 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  /*Inquilino.associate = function (models) {
-    Inquilino.hasMany(models.Contrato, {
-      foreignKey: "inquilino_cpf",
-      sourceKey: "cpf",
-    });
-  };*/
-
   return Inquilino;
 };

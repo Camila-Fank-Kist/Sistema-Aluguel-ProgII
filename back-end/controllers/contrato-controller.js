@@ -7,7 +7,7 @@ const contratoRouter = express.Router();
 // -- rotas para os dois tipos de usuário: locador e inquilino --
 
 // GET /contrato/locador - listar contratos das unidades do locador
-/*contratoRouter.get(
+contratoRouter.get(
   "/locador",
   authService.requireJWTAuth,
   authService.verificarSeIsLocador,
@@ -78,4 +78,4 @@ contratoRouter.post(
 
 // obs.:: a rota para listar contratos de uma unidade específica foi movida para "unidade_moradia-controller"
 
-module.exports = contratoRouter;*/
+module.exports = contratoRouter;

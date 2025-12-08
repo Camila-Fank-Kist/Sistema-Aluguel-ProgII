@@ -1,48 +1,83 @@
-"use strict";
+const express = require("express");
+const unidadeService = require("../services/unidade_moradia-service");
+const authService = require("../services/auth-service");
 
-module.exports = (sequelize, DataTypes) => {
-  // definindo o modelo Unidade_moradia que o Sequelize vai usar para traduzir as operações para comandos SQL para o banco de dados
-  const Unidade_moradia = sequelize.define(
-    "Unidade_moradia", // nome do modelo dentro do código js
-    // definição das colunas da tabela no banco de dados:
-    {
-      // no js, esse campo vai se chamar "id", mas no banco de dados ele é "id_um"
-      id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        field: "id_um",
-      },
-      nome_um: DataTypes.STRING,
-      preco_aluguel: DataTypes.DECIMAL(10, 2),
-      disponivel: DataTypes.BOOLEAN,
-      completo: DataTypes.BOOLEAN,
-      descricao: DataTypes.STRING,
-      id_imovel: DataTypes.INTEGER,
-      id_categoria_um: DataTypes.INTEGER,
-    },
-    {
-      sequelize,
-      tableName: "unidade_moradia", // nome da tabela no banco de dados
-      schema: "public",
-      freezeTableName: true,
-      timestamps: false, // diz para o Sequelize NÃO criar automaticamente as colunas 'createdAt' e 'updatedAt'
-    }
-  );
+const unidadeRouter = express.Router();
 
-  // essa função define os relacionamentos entre as tabelas
-  Unidade_moradia.associate = function (models) {
-    // uma unidade pertence a um imovel
-    Unidade_moradia.belongsTo(models.Imovel, {
-      foreignKey: "id_imovel", // chave estrangeira nessa tabela que referencia o imovel
-      sourceKey: "id", // chave primária na tabela Imovel que é referenciada pela chave estrangeira
-    });
-    // uma unidade de moradia pode ter muitos contratos ao longo do tempo (não vários contratos ativos ao mesmo tempo)
-    Unidade_moradia.hasMany(models.Contrato, {
-      foreignKey: "id_um", // chave estrangeira na tabela Contrato que referencia essa tabela
-      sourceKey: "id", // chave primária nessa tabela que é referenciada pela chave estrangeira
-    });
-  };
+// -- rotas para locador e público geral --
 
-  return Unidade_moradia;
-};
+// ROTAS ESPECÍFICAS POR USUÁRIO (get das unidades para locador e publico geral, que não é autenticado):
+// GET /unidade-moradia/locador - listar unidades do locador
+unidadeRouter.get(
+  "/locador",
+  authService.requireJWTAuth,
+  authService.verificarSeIsLocador,
+  unidadeService.listaUnidadesLocador
+);
+// GET /unidade-moradia/publico-geral - listar unidades para o público geral
+unidadeRouter.get(
+  "/publico-geral",
+  unidadeService.listaTodasAsUnidadesPublicoGeral
+);
+// FILTROS (que vão ser passados como parâmetros (query param?)): disponivel (true/false), id_imovel????????, id_categoria_um, nome_um (como fazer para aparecer se for parcialmente igual?)
+
+// GET /unidade-moradia/:id - Detalhe da unidade
+unidadeRouter.get("/:id", unidadeService.retornaUnidadePorId);
+// a princípio o que vai mudar aqui do locador para o inquilino são as coisas que aparecem na tela (botões de editar, excluir, etc.), então pensei em deixar só uma rota mesmo, e daí controlar o que é exibido no front
+
+// --
+
+// -- rotas só para o locador autenticado --
+
+// POST /unidade-moradia - Criar nova unidade
+unidadeRouter.post(
+  "/",
+  authService.requireJWTAuth,
+  authService.verificarSeIsLocador,
+  unidadeService.criaUnidade
+);
+
+// POST /unidade-moradia/:id/upload-foto - Upload de foto/galeria
+// é assim que faz upload de foto???
+unidadeRouter.post(
+  "/:id/upload-foto",
+  authService.requireJWTAuth,
+  authService.verificarSeIsLocador,
+  unidadeService.uploadFoto
+);
+
+// PUT /unidade-moradia/:id - Atualizar unidade
+unidadeRouter.put(
+  "/:id",
+  authService.requireJWTAuth,
+  authService.verificarSeIsLocador,
+  unidadeService.atualizaUnidade
+);
+// obs. não permitir alterar o campo "disponivel" aqui
+
+// PATCH /unidade-moradia/:id/disponivel - Mudar disponibilidade da unidade
+unidadeRouter.patch(
+  "/:id/disponivel",
+  authService.requireJWTAuth,
+  authService.verificarSeIsLocador,
+  unidadeService.mudaDisponibilidade
+);
+// obs.: só vai ser possível mudar a disponibilidade da unidade se não tiver um contrato ativo associado a ela
+
+// DELETE /unidade-moradia/:id - Remover unidade
+unidadeRouter.delete(
+  "/:id",
+  authService.requireJWTAuth,
+  authService.verificarSeIsLocador,
+  unidadeService.deletaUnidade
+);
+
+// GET /unidade-moradia/:id/contratos - listar contratos da unidade (incluir ativos e não ativos)
+unidadeRouter.get(
+  "/:id/contratos",
+  authService.requireJWTAuth,
+  authService.verificarSeIsLocador,
+  unidadeService.listaContratosDaUnidade
+);
+
+module.exports = unidadeRouter;

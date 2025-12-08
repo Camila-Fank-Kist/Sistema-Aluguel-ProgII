@@ -15,6 +15,8 @@ export default function App() {
   const [userCPF, setUserCPF] = useState("");
   const [permissoes, setPermissoes] = useState([]);
 
+  console.log("Estado atual - isLoggedIn:", isLoggedIn, "userCPF:", userCPF);
+
   useEffect(() => {
     // Verifica se há token no localStorage ao carregar
     const token = localStorage.getItem("token");
@@ -148,7 +150,6 @@ export default function App() {
         path="/novoUsuario"
         element={<CadastroUsuario handleLogout={handleLogout} />}
       />
-
       <Route
         path="/imovel/:cpf"
         element={<Imovel handleLogout={handleLogout} />}
