@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   const Imovel = sequelize.define(
     "Imovel",
     {
+      //itens de um imóvel
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,

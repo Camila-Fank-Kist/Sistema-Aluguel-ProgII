@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   const Inquilino = sequelize.define(
     "Inquilino",
     {
+      //itens necessários
       cpf: {
         type: DataTypes.STRING,
         primaryKey: true,

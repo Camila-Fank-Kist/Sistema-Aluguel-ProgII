@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   const Locador = sequelize.define(
     "Locador",
     {
+      //itens necessários
       cpf: {
         type: DataTypes.INTEGER,
         primaryKey: true,

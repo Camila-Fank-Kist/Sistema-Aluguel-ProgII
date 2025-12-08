@@ -1,3 +1,4 @@
+//mostra todas as informações do imóvel e deleta ele
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -5,14 +6,9 @@ import {
   CardContent,
   Typography,
   CardActionArea,
-  TextField,
   Box,
   AppBar,
   Button,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   Toolbar,
   CardActions,
   Dialog,
@@ -21,61 +17,59 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid"; //porque é um pacote específico pra esse
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import { useState, useEffect } from "react";
 import * as React from "react";
-import Imovel from "./Imovel";
 
 export default function detalharImovel({ handleLogout }) {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
+    //abre o alerta de exclusão do imóvel
     setOpen(true);
   };
 
   const handleClose = () => {
+    //fecha o alerta de exclusão do imóvel
     setOpen(false);
   };
-  const location = useLocation();
-  const navigate = useNavigate();
+  const location = useLocation(); //pega o imóvel com todas as suas informações enviadas de outro componente para serem usadas aqui
+  const navigate = useNavigate(); //serve para navegar para outro endereço
   const { imovel_detalhar: imovel, cpf } = location.state || {};
 
   //camila, aqui é contigo
   function adicionarUM() {
     try {
       navigate(`/imovel/`);
-      //console.log("toto");
-      //console.log(cpf);
     } catch {
       console.log("Falha no botão de inserção da unidade de moradia");
     }
   }
 
   function editarImovel() {
+    //usado para enviar ir pro endereço de atualização com
     try {
       navigate(`/imovel/${imovel.locador_cpf}/${imovel.id}/editar`, {
         state: {
+          //state serve para enviar os dados para InsercaoImovel
           cpf,
-          number: 2,
+          number: 2, //number diferencia se está sendo atualizado ou adicionado um imóvel
           imovel,
-          alerta: "Imóvel atualizado com sucesso!",
         },
       });
-      console.log("toto");
-      console.log(cpf);
+      console.log("Imóvel editado com sucesso!");
     } catch {
+      //em caso de erro
       console.log("Falha no botão de detalhes do imóvel");
     }
   }
 
   async function deletarImovel() {
+    //usado para deletar
     try {
       const response = await axios.delete(
         `http://localhost:3002/imovel/${imovel.id}/excluir`
       );
-      alert("Imóvel excluído com sucesso!");
-      navigate(`/imovel/${imovel.cpf}`);
+      navigate(`/imovel/${imovel.cpf}`); //retorna para a tela com todos os imóveis exibidos
       console.log("Imóvel excluído");
     } catch (error) {
       //em caso de erro
@@ -85,7 +79,7 @@ export default function detalharImovel({ handleLogout }) {
 
   return (
     <>
-      <AppBar
+      <AppBar //formatação da barra verde
         position="static"
         sx={{
           backgroundColor: "#89c56eff",
@@ -93,11 +87,13 @@ export default function detalharImovel({ handleLogout }) {
           width: "100%",
         }}
       >
+        {/* nome do sistema*/}
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <Typography variant="h4" sx={{ fontWeight: "bold" }}>
             Sua casa, sua vida
           </Typography>
 
+          {/* botões na barra verde*/}
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Button
               variant="outlined"
@@ -120,6 +116,7 @@ export default function detalharImovel({ handleLogout }) {
               {imovel.nome_imovel}
             </Typography>
             <Typography variant="body2" sx={{ color: "text.secondary" }}>
+              {/* exibição de todos os detalhes do imóvel*/}
               Rua: {imovel.endereco_rua}
               <br /> Número: {imovel.endereco_numero}
               <br /> Bairro:
@@ -162,6 +159,7 @@ export default function detalharImovel({ handleLogout }) {
               aria-labelledby="alert-dialog-title"
               aria-describedby="alert-dialog-description"
             >
+              {/* mensagem de alerta*/}
               <DialogTitle id="alert-dialog-title">
                 {"Deseja excluir esse imóvel?"}
               </DialogTitle>
@@ -171,9 +169,7 @@ export default function detalharImovel({ handleLogout }) {
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
-                <Button onClick={deletarImovel} autoFocus>
-                  Sim
-                </Button>
+                <Button onClick={deletarImovel}>Sim</Button>
                 <Button onClick={handleClose}>Não</Button>
               </DialogActions>
             </Dialog>
@@ -184,7 +180,7 @@ export default function detalharImovel({ handleLogout }) {
         variant="contained"
         size="small"
         color="primary"
-        onClick={() => navigate("/imovel/:cpf")}
+        onClick={() => navigate("/imovel/:cpf")} //retorna para tela com todos os imóveis
       >
         Voltar
       </Button>

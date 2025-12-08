@@ -9,7 +9,7 @@ imovelRouter.post("/", imovelService.criarImovel);
 // GET /imovel - Retornar todos os imóveis
 imovelRouter.get("/todos", imovelService.retornaTodosImoveis);
 
-// GET /imovel/:id - Retornar imóveis por cpf
+// GET /imovel/:id - Retornar imóveis por cpf do locador
 imovelRouter.get("/:cpf", imovelService.retornaImovelPorCPF);
 
 // GET /imovel/:id - Retornar imóvel por id (detalhar imóvel)

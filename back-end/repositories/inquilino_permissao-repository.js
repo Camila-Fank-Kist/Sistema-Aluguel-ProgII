@@ -82,7 +82,7 @@ module.exports = {
   obterTodosInquilinosPermissoes,
   obterPermissoesPorInquilino,
   obterInquilinosPorPermissao,
-  criarInquilinoPermissao,
   deletarInquilinoPermissao,
+  criarInquilinoPermissao,
   verificarPermissaoInquilino,
 };

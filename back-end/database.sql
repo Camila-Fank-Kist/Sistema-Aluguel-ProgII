@@ -1,5 +1,4 @@
 --Criação da tabela locador
--- locador_cpf = chave estrangeira e primária
 CREATE TABLE locador (
     cpf VARCHAR PRIMARY KEY,
     data_nascimento DATE,
@@ -8,7 +7,6 @@ CREATE TABLE locador (
 );
 
 --Criação da tabela inquilino
--- inquilino_cpf = chave estrangeira e primária
 CREATE TABLE inquilino (
     cpf VARCHAR PRIMARY KEY,
     data_nascimento DATE,

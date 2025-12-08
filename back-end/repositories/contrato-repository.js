@@ -1,26 +1,25 @@
 const model = require("../models");
 
-<<<<<<< HEAD
 const listarContratosDoLocador = async (locador_cpf, filtros) => {
   return await model.Contrato.findAll({
     where: filtros, // "WHERE" do banco de dados => filtros que vão ser aplicados na tabela Contrato
     // os atributos do objeto "filtros", que vão para o where, devem ter o mesmo nome das colunas do modelo (model.Contrato)
     include: [
       // "JOIN" do banco de dados
-=======
-const listarContratosDoLocador = async (locador_cpf, filtros) => {  
-  return await model.Contrato.findAll({
-    where: filtros, // "WHERE" do banco de dados => filtros que vão ser aplicados na tabela Contrato
-    // os atributos do objeto "filtros", que vão para o where, devem ter o mesmo nome das colunas do modelo (model.Contrato)
-    include: [ // "JOIN" do banco de dados
->>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
       {
         model: model.Unidade_moradia,
+        as: "Unidade_moradia", // defini pois vinha com um nome estranho (m no final)
+        required: true, // apenas contratos que tenham unidade de moradia vão ser retornados (INNER JOIN)
+        // precisei colocar o "required: true" porque antes ele tava retornando os contratos que não eram do locador autenticado (e retornava só o contrato, sem unidade de moradia nem imóvel), porque ele fazia um LEFT JOIN:
+        // mesmo quando o where não fosse atendido, ele retornava o contrato com a unidade de moradia como null
+        // porque o sequelize por padrão faz LEFT JOIN nos includes
+        // descobri porque na listagem de unidade de moradia funciona sem o "required: true" e aqui não:
+        // porque quando você coloca um where dentro de um include, o Sequelize automaticamente assume "required: true" para aquele include específico
         include: [
           {
             model: model.Imovel,
+            // required: true, // como tem um where nesse include, o Sequelize automaticamente assume "required: true", ntão não precisa colocar explicitamente
             where: {
-<<<<<<< HEAD
               locador_cpf: locador_cpf,
             }, // precisa obrigatoriamente ter {} no where
           },
@@ -28,15 +27,6 @@ const listarContratosDoLocador = async (locador_cpf, filtros) => {
       },
     ],
     order: [["data_inicio", "DESC"]],
-=======
-              locador_cpf: locador_cpf
-            } // precisa obrigatoriamente ter {} no where
-          }
-        ]
-      }
-    ],
-    order: [['data_inicio', 'DESC']],
->>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
   });
 };
 
@@ -44,26 +34,16 @@ const listarContratosDoInquilino = async (inquilino_cpf, filtros) => {
   return await model.Contrato.findAll({
     where: {
       ...filtros,
-<<<<<<< HEAD
       inquilino_cpf,
     },
     include: [
       // pra mostrar o nome da unidade de moradia
       {
         model: model.Unidade_moradia,
+        as: "Unidade_moradia",
       },
     ],
     order: [["data_inicio", "DESC"]],
-=======
-      inquilino_cpf
-    },
-    include: [ // pra mostrar o nome da unidade de moradia
-      {
-        model: model.Unidade_moradia,
-      }
-    ],
-    order: [['data_inicio', 'DESC']],
->>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
   });
 };
 
@@ -73,6 +53,7 @@ const obterContratoPorId = async (id) => {
     include: [
       {
         model: model.Unidade_moradia,
+        as: "Unidade_moradia",
         include: [{ model: model.Imovel }],
       },
       { model: model.Inquilino },
@@ -122,11 +103,7 @@ const listarContratosDaUnidade = async (id_um) => {
   try {
     return await model.Contrato.findAll({
       where: { id_um: id_um },
-<<<<<<< HEAD
       order: [["data_inicio", "DESC"]],
-=======
-      order: [['data_inicio', 'DESC']],
->>>>>>> c68eebaa42fed46e4f809f6e4965c9aa14fca47d
     });
   } catch (error) {
     throw error;

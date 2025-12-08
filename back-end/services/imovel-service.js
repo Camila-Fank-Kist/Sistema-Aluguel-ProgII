@@ -45,6 +45,7 @@ const criarImovel = async (req, res) => {
   });
   try {
     if (
+      //se alguma das caixas de imóvel não foi preenchida
       !regras_convivencia ||
       !publico ||
       !endereco_rua ||
