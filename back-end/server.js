@@ -6,11 +6,6 @@ const locadorRouter = require("./controllers/locador-controller");
 const inquilinoRouter = require("./controllers/inquilino-controller");
 const locador_permissaoRouter = require("./controllers/locador_permissao-controller");
 const inquilino_permissaoRouter = require("./controllers/inquilino_permissao-controller");
-<<<<<<< HEAD
-=======
-const unidadeMoradiaRouter = require("./controllers/unidade_moradia-controller");
-const contratoRouter = require("./controllers/contrato-controller");
->>>>>>> 2b5e9168d3021dbe0e44d68cfc9c1db26af5ee35
 const permissaoRouter = require("./controllers/permissao-controller");
 const authRouter = require("./controllers/auth-controller");
 const authService = require("./services/auth-service");
@@ -41,7 +36,6 @@ authService.configureJwtStrategy();
 authService.configureSerialization();
 
 const PORT = 3002;
-<<<<<<< HEAD
 const server = app.listen(PORT, () =>
   console.log(`Servidor está rodando na porta ${PORT}.`)
 );
@@ -50,23 +44,14 @@ const server = app.listen(PORT, () =>
 server.on("error", (err) => {
   console.error("Erro no servidor:", err);
 });
-=======
-app.listen(PORT, () => console.log(`Servidor está rodando na porta ${PORT}.`));
->>>>>>> 2b5e9168d3021dbe0e44d68cfc9c1db26af5ee35
 
 // Usar o router de autenticação (tela de login)
 app.use("/", authRouter);
 app.use("/imovel", imovelRouter);
-<<<<<<< HEAD
 app.use("/unidade-moradia", unidadeRouter);
-//app.use("/contrato", contratoRouter);
-=======
-app.use("/unidade-moradia", unidadeMoradiaRouter);
 app.use("/contrato", contratoRouter);
->>>>>>> 2b5e9168d3021dbe0e44d68cfc9c1db26af5ee35
 app.use("/locador", locadorRouter);
 app.use("/inquilino", inquilinoRouter);
 app.use("/locador_permissao", locador_permissaoRouter);
 app.use("/inquilino_permissao", inquilino_permissaoRouter);
 app.use("/permissao", permissaoRouter);
-
