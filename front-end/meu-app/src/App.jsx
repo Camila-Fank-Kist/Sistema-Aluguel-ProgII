@@ -113,14 +113,6 @@ export default function App() {
     localStorage.removeItem("token");
   };
 
-  /*const podeVisualizarImoveis = permissoes.some(
-    (permissao) => permissao.Permissao.descricao === "TELA_LOCADOR"
-  );
-
-  const podeVisualizarContrato = permissoes.some(
-    (permissao) => permissao.Permissao.descricao === "TELA_INQUILINO"
-  );*/
-
   // Se não estiver logado, mostra a tela de login
   if (!isLoggedIn) {
     return (
