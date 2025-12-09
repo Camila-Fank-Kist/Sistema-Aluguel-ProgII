@@ -103,7 +103,9 @@ const retornaContratoPorId = async (req, res) => {
 const criaContrato = async (req, res) => {
   try {
     const locador_cpf = req.user.cpf;
-    const { id_um, inquilino_cpf } = req.body; // se a propriedade não existe no objeto da requisição, o valor dela fica undefined
+    // const { id_um, inquilino_cpf } = req.body; // se a propriedade não existe no objeto da requisição, o valor dela fica undefined
+    const { inquilino_cpf } = req.body;
+    const id_um = parseInt(req.body.id_um);
     const preco = req.body.preco ? parseFloat(req.body.preco) : null;
 
     if (!id_um || !inquilino_cpf || !preco) {
@@ -174,7 +176,8 @@ const atualizaContrato = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const locador_cpf = req.user.cpf;
-    const { pdf, inquilino_cpf, id_um } = req.body;
+    const { pdf, inquilino_cpf } = req.body;
+    const id_um = parseInt(req.body.id_um);
     const preco = req.body.preco ? parseFloat(req.body.preco) : null;
 
     if (!id_um || !inquilino_cpf || !preco) {

@@ -11,6 +11,8 @@ const unidadeRouter = express.Router();
 unidadeRouter.get("/locador", authService.requireJWTAuth, authService.verificarSeIsLocador, unidadeService.listaUnidadesLocador);
 // GET /unidade-moradia/publico-geral - listar unidades para o público geral
 unidadeRouter.get("/publico-geral", unidadeService.listaTodasAsUnidadesPublicoGeral);
+// GET /unidade-moradia/categorias - listar categorias de unidade
+unidadeRouter.get("/categorias", unidadeService.listaCategorias);
 // FILTROS (que vão ser passados como parâmetros (query param?)): disponivel (true/false), id_imovel????????, id_categoria_um, nome_um (como fazer para aparecer se for parcialmente igual?)
 
 // GET /unidade-moradia/:id - Detalhe da unidade

@@ -69,6 +69,10 @@ const obterCategoriaPorId = async (id_categoria_um) => {
 	return await model.Categoria_um.findByPk(id_categoria_um);
 };
 
+const listarTodasCategorias = async () => {
+  return await model.Categoria_um.findAll({ order: [['id', 'ASC']] });
+};
+
 const criarUnidade = async (unidade) => {
 	return await model.Unidade_moradia.create(unidade);
 };
@@ -98,4 +102,5 @@ module.exports = {
 	criarUnidade,
 	atualizarUnidade,
 	deletarUnidade,
+  listarTodasCategorias,
 };

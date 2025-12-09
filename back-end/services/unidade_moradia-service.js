@@ -23,9 +23,9 @@ const listaUnidadesLocador = async (req, res) => {
     if (req.query.id_categoria_um) {
       filtros.id_categoria_um = parseInt(req.query.id_categoria_um);
     }
-    // if (req.query.nome_um) {
-    //   filtros.nome_um = req.query.nome_um;
-    // }
+    if (req.query.nome_um) {
+      filtros.nome_um = req.query.nome_um;
+    }
 
     const unidades_locador = await unidadeRepository.listarUnidadesDoLocador(locador_cpf, filtros, req.query.nome_um);
     // se tentar passar uma variavel que não existe, passa undefined
@@ -61,9 +61,9 @@ const listaTodasAsUnidadesPublicoGeral = async (req, res) => {
       intervalo_preco_um.preco_max = parseFloat(req.query.preco_max);
     }
 
-    // if (req.query.nome_um) {
-    //   filtros_um.nome_um = req.query.nome_um;
-    // }
+    if (req.query.nome_um) {
+      filtros_um.nome_um = req.query.nome_um;
+    }
     if (req.query.cidade) {
       filtros_imovel.endereco_cidade = req.query.cidade;
     }
@@ -360,6 +360,16 @@ const listaContratosDaUnidade = async (req, res) => {
   }
 };
 
+const listaCategorias = async (req, res) => {
+  try {
+    const categorias = await unidadeRepository.listarTodasCategorias();
+    return res.status(200).json(categorias);
+  } catch (error) {
+    console.error('Erro ao listar categorias:', error);
+    return res.sendStatus(500);
+  }
+};
+
 module.exports = {
   listaUnidadesLocador,
   listaTodasAsUnidadesPublicoGeral,
@@ -370,4 +380,5 @@ module.exports = {
   mudaDisponibilidade,
   deletaUnidade,
   listaContratosDaUnidade,
+  listaCategorias,
 };
