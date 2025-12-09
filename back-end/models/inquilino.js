@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   const Inquilino = sequelize.define(
     "Inquilino",
     {
+      //itens necessários
       cpf: {
         type: DataTypes.STRING,
         primaryKey: true,
@@ -23,13 +24,6 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: false,
     }
   );
-
-  /*Inquilino.associate = function (models) {
-    Inquilino.hasMany(models.Contrato, {
-      foreignKey: "inquilino_cpf",
-      sourceKey: "cpf",
-    });
-  };*/
 
   return Inquilino;
 };

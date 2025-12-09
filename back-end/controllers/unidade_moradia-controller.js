@@ -8,7 +8,12 @@ const unidadeRouter = express.Router();
 
 // ROTAS ESPECÍFICAS POR USUÁRIO (get das unidades para locador e publico geral, que não é autenticado):
 // GET /unidade-moradia/locador - listar unidades do locador
-unidadeRouter.get("/locador", authService.requireJWTAuth, authService.verificarSeIsLocador, unidadeService.listaUnidadesLocador);
+unidadeRouter.get(
+  "/locador",
+  authService.requireJWTAuth,
+  authService.verificarSeIsLocador,
+  unidadeService.listaUnidadesLocador
+);
 // GET /unidade-moradia/publico-geral - listar unidades para o público geral
 unidadeRouter.get("/publico-geral", unidadeService.listaTodasAsUnidadesPublicoGeral);
 // GET /unidade-moradia/categorias - listar categorias de unidade
@@ -24,25 +29,54 @@ unidadeRouter.get("/:id", unidadeService.retornaUnidadePorId);
 // -- rotas só para o locador autenticado --
 
 // POST /unidade-moradia - Criar nova unidade
-unidadeRouter.post("/", authService.requireJWTAuth, authService.verificarSeIsLocador, unidadeService.criaUnidade);
+unidadeRouter.post(
+  "/",
+  authService.requireJWTAuth,
+  authService.verificarSeIsLocador,
+  unidadeService.criaUnidade
+);
 
 // POST /unidade-moradia/:id/upload-foto - Upload de foto/galeria
 // é assim que faz upload de foto???
-unidadeRouter.post("/:id/upload-foto", authService.requireJWTAuth, authService.verificarSeIsLocador, unidadeService.uploadFoto);
+unidadeRouter.post(
+  "/:id/upload-foto",
+  authService.requireJWTAuth,
+  authService.verificarSeIsLocador,
+  unidadeService.uploadFoto
+);
 
 // PUT /unidade-moradia/:id - Atualizar unidade
-unidadeRouter.put("/:id", authService.requireJWTAuth, authService.verificarSeIsLocador, unidadeService.atualizaUnidade);
+unidadeRouter.put(
+  "/:id",
+  authService.requireJWTAuth,
+  authService.verificarSeIsLocador,
+  unidadeService.atualizaUnidade
+);
 // obs. não permitir alterar o campo "disponivel" aqui
 
 // PATCH /unidade-moradia/:id/disponivel - Mudar disponibilidade da unidade
-unidadeRouter.patch("/:id/disponivel", authService.requireJWTAuth, authService.verificarSeIsLocador, unidadeService.mudaDisponibilidade);
+unidadeRouter.patch(
+  "/:id/disponivel",
+  authService.requireJWTAuth,
+  authService.verificarSeIsLocador,
+  unidadeService.mudaDisponibilidade
+);
 // obs.: só vai ser possível mudar a disponibilidade da unidade se não tiver um contrato ativo associado a ela
 
 // DELETE /unidade-moradia/:id - Remover unidade
-unidadeRouter.delete("/:id", authService.requireJWTAuth, authService.verificarSeIsLocador, unidadeService.deletaUnidade);
+unidadeRouter.delete(
+  "/:id",
+  authService.requireJWTAuth,
+  authService.verificarSeIsLocador,
+  unidadeService.deletaUnidade
+);
 
 // GET /unidade-moradia/:id/contratos - listar contratos da unidade (incluir ativos e não ativos)
-unidadeRouter.get("/:id/contratos", authService.requireJWTAuth, authService.verificarSeIsLocador, unidadeService.listaContratosDaUnidade);
-
+unidadeRouter.get(
+  "/:id/contratos",
+  authService.requireJWTAuth,
+  authService.verificarSeIsLocador,
+  unidadeService.listaContratosDaUnidade
+);
 
 module.exports = unidadeRouter;

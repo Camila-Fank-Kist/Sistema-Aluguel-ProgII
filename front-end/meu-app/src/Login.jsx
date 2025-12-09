@@ -1,5 +1,5 @@
+//atua no login do usuário e na exibição da pergunta pro cadastro dele
 import React, { useState } from "react";
-//import PropTypes from "prop-types";
 import axios from "axios";
 
 import {
@@ -30,7 +30,7 @@ export default function Login({ handleLogin }) {
   const [mostrarCadastro, setMostrarCadastro] = useState(false);
   const [telaLogin, setTelaLogin] = useState(true);
 
-  const navigate = useNavigate();
+  const navigate = useNavigate(); //usado para ir pra outra tela
 
   async function enviaLogin(event) {
     event.preventDefault();
@@ -48,7 +48,7 @@ export default function Login({ handleLogin }) {
           cpf: username,
           tipo_usuario: response.data.tipo_usuario,
         });
-        navigate("/imovel/:cpf", { state: { cpf: username } });
+        navigate(`/imovel/${username}`, { state: { cpf: username } });
         setMostrarCadastro(false);
         setMostrarPergunta(false);
         setTelaLogin(false);
@@ -87,6 +87,7 @@ export default function Login({ handleLogin }) {
   }
 
   return (
+    //exibição da pergunta para saber se a pessoa que quer se cadstrar é locador ou inquilino. Opcao vai guardar isso
     <Box style={{ maxWidth: "300px" }}>
       {mostrarPergunta == true &&
       mostrarCadastro == false &&
@@ -122,6 +123,7 @@ export default function Login({ handleLogin }) {
               }}
               color="primary"
               onClick={() => {
+                //vai mostrar as caixinhas pro cadastro quando clica em Próximo
                 setMostrarCadastro(true);
                 setMostrarPergunta(false);
                 setTelaLogin(false);
@@ -138,6 +140,7 @@ export default function Login({ handleLogin }) {
               }}
               color="error"
               onClick={() => {
+                //volta pra tela de login quando clica em cancelar
                 setMostrarCadastro(false);
                 setMostrarPergunta(false);
                 setTelaLogin(true);
@@ -149,10 +152,11 @@ export default function Login({ handleLogin }) {
         </FormControl>
       ) : mostrarCadastro == true &&
         mostrarPergunta == false &&
-        telaLogin == false ? (
+        telaLogin == false ? ( //exibe as caixinhas de pergunta pro usuário se cadstrar
         <CadastroUsuario
           opcao={opcao}
-          voltar={() => {
+          onClick={() => {
+            //depois de cadastrado, volta pra login
             setMostrarCadastro(false);
             setMostrarPergunta(false);
             setTelaLogin(true);
@@ -179,7 +183,7 @@ export default function Login({ handleLogin }) {
               required
               id="passwd-input"
               label="Senha: "
-              type="password" //mudei
+              type="password" //para ficar com a senha em bolinhas
               size="small"
               value={passwd}
               onChange={(event) => {
@@ -222,6 +226,7 @@ export default function Login({ handleLogin }) {
               }}
               color="primary"
               onClick={() => {
+                //se clicou em Cadstrar, vai mostrar a pergunta
                 setMostrarPergunta(true);
                 setMostrarCadastro(false);
                 setTelaLogin(false);
@@ -244,7 +249,3 @@ export default function Login({ handleLogin }) {
     </Box>
   );
 }
-
-// Login.propTypes = {
-// 	setToken: PropTypes.func.isRequired,
-// };

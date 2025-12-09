@@ -82,7 +82,7 @@ module.exports = {
   obterTodosLocadoresPermissoes,
   obterPermissoesPorLocador,
   obterLocadoresPorPermissao,
-  criarLocadorPermissao,
   deletarLocadorPermissao,
+  criarLocadorPermissao,
   verificarPermissaoLocador,
 };

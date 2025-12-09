@@ -2,17 +2,21 @@ const model = require("../models");
 const { Op } = require("sequelize");
 
 // Função para listar todas as unidades (público geral) com filtros opcionais
-const listarTodasAsUnidadesPublicoGeral = async (filtros_um, intervalo_preco_um, nome_um, filtros_imovel) => {
-  
+const listarTodasAsUnidadesPublicoGeral = async (
+  filtros_um,
+  intervalo_preco_um,
+  nome_um,
+  filtros_imovel
+) => {
   if (nome_um) {
     filtros_um.nome_um = {
-      [Op.iLike]: `%${nome_um}%`
+      [Op.iLike]: `%${nome_um}%`,
     };
   }
-  
+
   if (intervalo_preco_um.preco_min || intervalo_preco_um.preco_max) {
     filtros_um.preco_aluguel = {}; // não estamos passando um valor exato para preco_aluguel, mas sim um intervalo, então não tem como colocarmos um valor simples em preco_aluguel (como um float ou algo do tipo)
-    // precisamos passar para o campo preco_aluguel 2 valores diferentes, que são as regras (preço mínimo e preço máximo), e para isso precisamos transformar preco_aluguel em um objeto (para passar esses dois valores para o mesmo campo). 
+    // precisamos passar para o campo preco_aluguel 2 valores diferentes, que são as regras (preço mínimo e preço máximo), e para isso precisamos transformar preco_aluguel em um objeto (para passar esses dois valores para o mesmo campo).
     // [Op.gte] é a chave e intervalo_preco_um.preco_min é o valor associado a essa chave no objeto; [Op.lte] é a chave e intervalo_preco_um.preco_max é o valor associado a essa chave no objeto. Daí com isso o sequelize monta a requisição SQL.
     if (intervalo_preco_um.preco_min) {
       filtros_um.preco_aluguel[Op.gte] = intervalo_preco_um.preco_min;
@@ -27,46 +31,44 @@ const listarTodasAsUnidadesPublicoGeral = async (filtros_um, intervalo_preco_um,
     include: [
       {
         model: model.Imovel,
-        where: filtros_imovel
-      }
+        where: filtros_imovel,
+      },
     ],
   });
-
 };
 
-const listarUnidadesDoLocador = async (locador_cpf, filtros, nome_um) => { // o que define quem é quem na passagem de parâmetros é a ordem
+const listarUnidadesDoLocador = async (locador_cpf, filtros, nome_um) => {
+  // o que define quem é quem na passagem de parâmetros é a ordem
 
-	if (nome_um) {
+  if (nome_um) {
     filtros.nome_um = {
-      [Op.iLike]: `%${nome_um}%`
+      [Op.iLike]: `%${nome_um}%`,
     };
   }
 
-	return await model.Unidade_moradia.findAll({
-		where: filtros,
-		include: [
-			{
-				model: model.Imovel,
-				where: { locador_cpf: locador_cpf },
-			},
-		],
-	});
+  return await model.Unidade_moradia.findAll({
+    where: filtros,
+    include: [
+      {
+        model: model.Imovel,
+        where: { locador_cpf: locador_cpf },
+      },
+    ],
+  });
 };
 
 const obterUnidadePorId = async (id) => {
-	return await model.Unidade_moradia.findByPk(
-    id, 
-    {
-      include: [
-        {
-          model: model.Imovel,
-        },
-      ],
-    });
+  return await model.Unidade_moradia.findByPk(id, {
+    include: [
+      {
+        model: model.Imovel,
+      },
+    ],
+  });
 };
 
 const obterCategoriaPorId = async (id_categoria_um) => {
-	return await model.Categoria_um.findByPk(id_categoria_um);
+  return await model.Categoria_um.findByPk(id_categoria_um);
 };
 
 const listarTodasCategorias = async () => {
@@ -74,7 +76,7 @@ const listarTodasCategorias = async () => {
 };
 
 const criarUnidade = async (unidade) => {
-	return await model.Unidade_moradia.create(unidade);
+  return await model.Unidade_moradia.create(unidade);
 };
 
 const atualizarUnidade = async (unidade) => {

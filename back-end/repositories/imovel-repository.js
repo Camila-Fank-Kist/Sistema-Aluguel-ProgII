@@ -10,6 +10,13 @@ const obterImovelPorId = async (imovel) => {
   return await model.Imovel.findByPk(imovel.id);
 };
 
+// Função para obter imóvel por CPF
+const obterImovelPorCPF = async (imovel) => {
+  return await model.Imovel.findAll({
+    where: { locador_cpf: imovel.locador_cpf },
+  });
+};
+
 // Função para criar um novo imóvel
 const criarImovel = async (imovel) => {
   await model.Imovel.create(imovel);
@@ -49,6 +56,7 @@ const deletarImovel = async (imovel) => {
 module.exports = {
   obterTodosImoveis,
   obterImovelPorId,
+  obterImovelPorCPF,
   criarImovel,
   atualizarImovel,
   deletarImovel,

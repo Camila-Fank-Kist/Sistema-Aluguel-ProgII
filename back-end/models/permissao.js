@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   const Permissao = sequelize.define(
     "Permissao",
     {
+      //itens necessários
       id: {
         type: DataTypes.BIGINT,
         primaryKey: true,

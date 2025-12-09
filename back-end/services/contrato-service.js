@@ -14,7 +14,8 @@ const listaContratosDoLocador = async (req, res) => {
     // descobri que se eu tiver um objeto "x" e fizer "x.atributo1 = valor", mesmo que atributo1 não exista em x, ele cria esse atributo
 
     if (req.query.contrato_ativo) {
-      filtros.contrato_ativo = (req.query.contrato_ativo === 'true') ? true : false;
+      filtros.contrato_ativo =
+        req.query.contrato_ativo === "true" ? true : false;
     }
     if (req.query.id_um) {
       filtros.id_um = parseInt(req.query.id_um);
@@ -24,12 +25,11 @@ const listaContratosDoLocador = async (req, res) => {
     }
 
     const contratos_locador = await contratoRepository.listarContratosDoLocador(
-      locador_cpf, 
+      locador_cpf,
       filtros
     );
 
     return res.status(200).json(contratos_locador);
-
   } catch (error) {
     console.error("Erro ao buscar contratos do locador:", error);
     return res.sendStatus(500);
@@ -44,25 +44,25 @@ const listaContratosDoInquilino = async (req, res) => {
     const filtros = {};
 
     if (req.query.contrato_ativo) {
-      filtros.contrato_ativo = (req.query.contrato_ativo === 'true') ? true : false;
+      filtros.contrato_ativo =
+        req.query.contrato_ativo === "true" ? true : false;
     }
     if (req.query.id_um) {
       filtros.id_um = parseInt(req.query.id_um);
     }
 
-    const contratos_inquilino = await contratoRepository.listarContratosDoInquilino(
-      inquilino_cpf, 
-      filtros
-    );
+    const contratos_inquilino =
+      await contratoRepository.listarContratosDoInquilino(
+        inquilino_cpf,
+        filtros
+      );
 
     return res.status(200).json(contratos_inquilino);
-
   } catch (error) {
     console.error("Erro ao buscar contratos do inquilino:", error);
     return res.sendStatus(500);
   }
 };
-
 
 // :) aprovado para locador e inquilino
 // obs.: só pode ver o contrato se for o locador dono da unidade ou o inquilino do contrato
@@ -80,18 +80,21 @@ const retornaContratoPorId = async (req, res) => {
 
     // verificando se o usuário tem permissão pra ver esse contrato
     // pode ver se é o inquilino do contrato OU é o locador da unidade
-    if (!(contrato.inquilino_cpf === usuario_cpf) && !(contrato.Unidade_moradia?.Imovel?.locador_cpf === usuario_cpf)) {
-      return res.status(403).json({ message: "Sem permissão para visualizar esse contrato." });
+    if (
+      !(contrato.inquilino_cpf === usuario_cpf) &&
+      !(contrato.Unidade_moradia?.Imovel?.locador_cpf === usuario_cpf)
+    ) {
+      return res
+        .status(403)
+        .json({ message: "Sem permissão para visualizar esse contrato." });
     }
 
     return res.status(200).json(contrato);
-
   } catch (error) {
     console.error("Erro ao buscar contrato:", error);
     return res.sendStatus(500);
   }
 };
-
 
 // -- ROTAS SÓ PRO LOCADOR --
 
@@ -109,35 +112,53 @@ const criaContrato = async (req, res) => {
     const preco = req.body.preco ? parseFloat(req.body.preco) : null;
 
     if (!id_um || !inquilino_cpf || !preco) {
-      return res.status(400).json({ message: "Unidade de moradia, inquilino e preço são obrigatórios." }); // ok
+      return res
+        .status(400)
+        .json({
+          message: "Unidade de moradia, inquilino e preço são obrigatórios.",
+        }); // ok
     }
 
     if (preco < 0) {
-      return res.status(400).json({ message: "O preço não pode ser negativo." }); // ok
+      return res
+        .status(400)
+        .json({ message: "O preço não pode ser negativo." }); // ok
     }
 
     // verificando se a unidade existe
     const unidade = await unidadeRepository.obterUnidadePorId(id_um);
     if (!unidade) {
-      return res.status(404).json({ message: "Unidade de moradia não encontrada." }); // ok
+      return res
+        .status(404)
+        .json({ message: "Unidade de moradia não encontrada." }); // ok
     }
     // verificando se a unidade pertence ao locador autenticado
-    if (unidade.Imovel?.locador_cpf != locador_cpf) { // !==
-      return res.status(403).json({ message: "Sem permissão para criar contrato nessa unidade." }); // ok
+    if (unidade.Imovel?.locador_cpf != locador_cpf) {
+      // !==
+      return res
+        .status(403)
+        .json({ message: "Sem permissão para criar contrato nessa unidade." }); // ok
     }
 
     // verificando se a unidade está disponível
     if (unidade.disponivel === false) {
-      return res.status(409).json({ message: "Não é possível criar um contrato. A unidade está indisponível." }); // ok
+      return res
+        .status(409)
+        .json({
+          message:
+            "Não é possível criar um contrato. A unidade está indisponível.",
+        }); // ok
     }
 
     // verificando se o inquilino existe
-    const inquilino = await inquilinoRepository.obterInquilinoPorCpf(inquilino_cpf);
+    const inquilino =
+      await inquilinoRepository.obterInquilinoPorCpf(inquilino_cpf);
     if (!inquilino) {
       return res.status(404).json({ message: "Inquilino não encontrado." });
     }
 
-    const contrato_criado = await contratoRepository.criarContrato({ // ok
+    const contrato_criado = await contratoRepository.criarContrato({
+      // ok
       id_um,
       inquilino_cpf,
       preco,
@@ -147,7 +168,8 @@ const criaContrato = async (req, res) => {
     });
 
     // atualizando a unidade de moradia associada para indisponível
-    await unidadeRepository.atualizarUnidade({ // ok
+    await unidadeRepository.atualizarUnidade({
+      // ok
       id: id_um,
       nome_um: unidade.nome_um,
       preco_aluguel: unidade.preco_aluguel,
@@ -155,11 +177,10 @@ const criaContrato = async (req, res) => {
       id_imovel: unidade.id_imovel,
       id_categoria_um: unidade.id_categoria_um,
       completo: unidade.completo,
-      disponivel: false // só esse campo muda
+      disponivel: false, // só esse campo muda
     });
 
     return res.status(201).json(contrato_criado);
-
   } catch (error) {
     console.error("Erro ao criar contrato:", error);
     return res.sendStatus(500);
@@ -181,7 +202,11 @@ const atualizaContrato = async (req, res) => {
     const preco = req.body.preco ? parseFloat(req.body.preco) : null;
 
     if (!id_um || !inquilino_cpf || !preco) {
-      return res.status(400).json({ message: "Unidade de moradia, inquilino e preço são obrigatórios." }); // ok
+      return res
+        .status(400)
+        .json({
+          message: "Unidade de moradia, inquilino e preço são obrigatórios.",
+        }); // ok
     }
 
     // buscando o contrato, que já vem com unidade, imóvel e inquilino
@@ -191,60 +216,84 @@ const atualizaContrato = async (req, res) => {
     }
 
     // verificando se o locador é dono da unidade ao qual o contrato pertence
-    if (contrato.Unidade_moradia?.Imovel?.locador_cpf != locador_cpf) { // !==
-      return res.status(403).json({ message: "Sem permissão para atualizar esse contrato." }); // ok
+    if (contrato.Unidade_moradia?.Imovel?.locador_cpf != locador_cpf) {
+      // !==
+      return res
+        .status(403)
+        .json({ message: "Sem permissão para atualizar esse contrato." }); // ok
     }
 
     // verificando se o contrato está ativo
     if (contrato.contrato_ativo === false) {
-      return res.status(409).json({ message: "Não é possível atualizar um contrato encerrado." }); // ok
+      return res
+        .status(409)
+        .json({ message: "Não é possível atualizar um contrato encerrado." }); // ok
     }
 
     if (preco < 0) {
-      return res.status(400).json({ message: "O preço não pode ser negativo." }); // ok
+      return res
+        .status(400)
+        .json({ message: "O preço não pode ser negativo." }); // ok
     }
 
     // verificando se o novo inquilino existe, se estiver alterando o inquilino
-    if (inquilino_cpf && inquilino_cpf != contrato.inquilino_cpf) { // !==
-      const novo_inquilino = await inquilinoRepository.obterInquilinoPorCpf(inquilino_cpf);
+    if (inquilino_cpf && inquilino_cpf != contrato.inquilino_cpf) {
+      // !==
+      const novo_inquilino =
+        await inquilinoRepository.obterInquilinoPorCpf(inquilino_cpf);
       if (!novo_inquilino) {
-        return res.status(404).json({ message: "Novo inquilino não encontrado." }); // ok
+        return res
+          .status(404)
+          .json({ message: "Novo inquilino não encontrado." }); // ok
       }
     }
 
     // se estiver alterando a unidade de moradia
     let trocarUnidade = false;
     let nova_unidade = null;
-    if (id_um &&id_um != contrato.id_um) { // !==
+    if (id_um && id_um != contrato.id_um) {
+      // !==
       // verificando se a nova unidade existe e pertence ao locador autenticado
       nova_unidade = await unidadeRepository.obterUnidadePorId(id_um);
       if (!nova_unidade) {
-        return res.status(404).json({ message: "Nova unidade de moradia não encontrada." }); // ok
+        return res
+          .status(404)
+          .json({ message: "Nova unidade de moradia não encontrada." }); // ok
       }
       if (nova_unidade.Imovel?.locador_cpf !== locador_cpf) {
-        return res.status(403).json({ message: "Sem permissão para mover o contrato para essa unidade." }); // ok
+        return res
+          .status(403)
+          .json({
+            message: "Sem permissão para mover o contrato para essa unidade.",
+          }); // ok
       }
       // verificar se a nova unidade está disponível
       if (nova_unidade.disponivel === false) {
-        return res.status(409).json({ message: "A nova unidade está indisponível." }); // ok
+        return res
+          .status(409)
+          .json({ message: "A nova unidade está indisponível." }); // ok
       }
       trocarUnidade = true;
     }
 
-    const contrato_atualizado = await contratoRepository.atualizarContrato( // ok
-      id, 
-      { 
+    const contrato_atualizado = await contratoRepository.atualizarContrato(
+      // ok
+      id,
+      {
         preco, // só esses 4 podem mudar
         pdf, // só esses 4 podem mudar
         inquilino_cpf, // só esses 4 podem mudar
         id_um, // só esses 4 podem mudar
         contrato_ativo: contrato.contrato_ativo,
         data_inicio: contrato.data_inicio,
-        data_fim: contrato.data_fim
-      });
+        data_fim: contrato.data_fim,
+      }
+    );
 
-    if (trocarUnidade) { // percebi que só dá pra mudar a unidade depois que o contrato já foi atualizado, pq se der erro na atualização do contrato, geraria inconsistência se isso fosse antes
-      await unidadeRepository.atualizarUnidade({ // ok
+    if (trocarUnidade) {
+      // percebi que só dá pra mudar a unidade depois que o contrato já foi atualizado, pq se der erro na atualização do contrato, geraria inconsistência se isso fosse antes
+      await unidadeRepository.atualizarUnidade({
+        // ok
         id: contrato.id_um,
         nome_um: contrato.Unidade_moradia.nome_um,
         preco_aluguel: contrato.Unidade_moradia.preco_aluguel,
@@ -252,9 +301,10 @@ const atualizaContrato = async (req, res) => {
         id_imovel: contrato.Unidade_moradia.id_imovel,
         id_categoria_um: contrato.Unidade_moradia.id_categoria_um,
         completo: contrato.Unidade_moradia.completo,
-        disponivel: true // só esse campo muda >> antiga unidade fica disponível
+        disponivel: true, // só esse campo muda >> antiga unidade fica disponível
       });
-      await unidadeRepository.atualizarUnidade({ // ok
+      await unidadeRepository.atualizarUnidade({
+        // ok
         id: id_um,
         nome_um: nova_unidade.nome_um,
         preco_aluguel: nova_unidade.preco_aluguel,
@@ -262,12 +312,11 @@ const atualizaContrato = async (req, res) => {
         id_imovel: nova_unidade.id_imovel,
         id_categoria_um: nova_unidade.id_categoria_um,
         completo: nova_unidade.completo,
-        disponivel: false // só esse campo muda >> nova unidade fica indisponível
+        disponivel: false, // só esse campo muda >> nova unidade fica indisponível
       });
     }
 
     return res.status(200).json(contrato_atualizado);
-
   } catch (error) {
     console.error("Erro ao atualizar contrato:", error);
     return res.sendStatus(500);
@@ -291,27 +340,33 @@ const encerraContrato = async (req, res) => {
     }
 
     if (contrato.Unidade_moradia?.Imovel?.locador_cpf !== locador_cpf) {
-      return res.status(403).json({ message: "Sem permissão para encerrar este contrato." }); // ok
+      return res
+        .status(403)
+        .json({ message: "Sem permissão para encerrar este contrato." }); // ok
     }
 
     if (contrato.contrato_ativo === false) {
-      return res.status(409).json({ message: "Este contrato já está encerrado." }); // ok
+      return res
+        .status(409)
+        .json({ message: "Este contrato já está encerrado." }); // ok
     }
 
-    const contrato_encerrado = await contratoRepository.atualizarContrato( // ok
-      id, 
-      { 
+    const contrato_encerrado = await contratoRepository.atualizarContrato(
+      // ok
+      id,
+      {
         preco: contrato.preco,
         pdf: contrato.pdf,
         inquilino_cpf: contrato.inquilino_cpf,
         id_um: contrato.id_um,
         data_inicio: contrato.data_inicio,
         contrato_ativo: false, // só esses dois mudam
-        data_fim: new Date() // só esses dois mudam
+        data_fim: new Date(), // só esses dois mudam
       }
     );
 
-    await unidadeRepository.atualizarUnidade({ // ok
+    await unidadeRepository.atualizarUnidade({
+      // ok
       id: contrato.id_um,
       nome_um: contrato.Unidade_moradia.nome_um,
       preco_aluguel: contrato.Unidade_moradia.preco_aluguel,
@@ -319,20 +374,18 @@ const encerraContrato = async (req, res) => {
       id_imovel: contrato.Unidade_moradia.id_imovel,
       id_categoria_um: contrato.Unidade_moradia.id_categoria_um,
       completo: contrato.Unidade_moradia.completo,
-      disponivel: true // só esse muda, para deixar a unidade disponível
+      disponivel: true, // só esse muda, para deixar a unidade disponível
     });
 
-    return res.status(200).json({ 
-      message: "Contrato encerrado com sucesso.", 
-      contrato: contrato_encerrado 
+    return res.status(200).json({
+      message: "Contrato encerrado com sucesso.",
+      contrato: contrato_encerrado,
     });
-
   } catch (error) {
     console.error("Erro ao encerrar contrato:", error);
     return res.sendStatus(500);
   }
 };
-
 
 module.exports = {
   listaContratosDoLocador,

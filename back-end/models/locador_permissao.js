@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   const LocadorPermissao = sequelize.define(
     "LocadorPermissao",
     {
+      //itens necessários
       cpf: {
         type: DataTypes.STRING,
         primaryKey: true,

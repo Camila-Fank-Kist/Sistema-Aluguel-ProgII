@@ -6,7 +6,7 @@ const locadorRouter = express.Router();
 // POST /locador - Criar locador
 locadorRouter.post("/", locadorService.criarLocadores);
 
-// GET /locador/:cpf - Retornares locadores
+// GET /locador/:cpf - Retornar todos locadores
 locadorRouter.get("/todos", locadorService.retornaTodosLocadores);
 
 module.exports = locadorRouter;

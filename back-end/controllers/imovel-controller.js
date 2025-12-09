@@ -9,13 +9,16 @@ imovelRouter.post("/", imovelService.criarImovel);
 // GET /imovel - Retornar todos os imóveis
 imovelRouter.get("/todos", imovelService.retornaTodosImoveis);
 
-// GET /imovel/:id - Retornar imóvel por id
-imovelRouter.get("/:id", imovelService.retornaImovelPorId);
+// GET /imovel/:id - Retornar imóveis por cpf do locador
+imovelRouter.get("/:cpf", imovelService.retornaImovelPorCPF);
+
+// GET /imovel/:id - Retornar imóvel por id (detalhar imóvel)
+imovelRouter.get("/:cpf/:id", imovelService.retornaImovelPorId);
 
 // PUT /imovel/:id - Atualizar imóvel
-imovelRouter.put("/:id", imovelService.atualizaImovel);
+imovelRouter.put("/:cpf/:id/editar", imovelService.atualizaImovel);
 
 // DELETE /imovel/:id - Deletar imóvel
-imovelRouter.delete("/:id", imovelService.deletaImovel);
+imovelRouter.delete("/:id/excluir", imovelService.deletaImovel);
 
 module.exports = imovelRouter;

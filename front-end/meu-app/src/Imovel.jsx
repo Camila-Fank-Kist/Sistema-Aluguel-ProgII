@@ -1,4 +1,4 @@
-//Finalizar filtro e barra de pesquisa
+//mostra todos os imóveis cadatrados
 import axios from "axios";
 import {
   Card,
@@ -22,15 +22,18 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 
+//foram colocadas fora de Imovel, pois quando estavam dentro, ao digitar uma letra, o cursor mudava de foco
 const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
+  //estilização da caixa da barra de pesquisa pego no Material UI
+  position: "relative", //posição
+  borderRadius: theme.shape.borderRadius, //borda
   backgroundColor: alpha(theme.palette.common.white, 0.15),
   "&:hover": {
+    //cor de fundo
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
-  marginLeft: 0,
-  width: "400px",
+  marginLeft: 0, //margem esquerda
+  width: "400px", //largura
   [theme.breakpoints.up("sm")]: {
     marginLeft: theme.spacing(1),
     width: "auto",
@@ -38,6 +41,7 @@ const Search = styled("div")(({ theme }) => ({
 }));
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
+  //ícone da lupa da caixa da barra de pesquisa pego no Material UI
   padding: theme.spacing(0, 2),
   height: "100%",
   position: "absolute",
@@ -48,12 +52,12 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  //campo de busca do nome do imóvel na caixa da barra de pesquisa pego no Material UI
   color: "#ffffff",
   fontWeight: "bold", // NEGRITO
   width: "400px",
   "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create("width"),
 
@@ -77,9 +81,10 @@ export default function Imovel({ handleLogout }) {
   const [imovel, setImovel] = useState([]);
   const [selecaoFiltro, setSelecaoFiltro] = useState("");
   const [barraPesquisa, setBarraPesquisa] = useState("");
-  const cpf = localStorage.getItem("cpf"); // garante que pega o CPF logado
+  const cpf = localStorage.getItem("cpf"); // pega o CPF logado
 
   const tiposDeImovel = {
+    //para a visualização dos dados básicos
     1: "Kitnet",
     2: "Casa",
     3: "Pensão",
@@ -87,6 +92,7 @@ export default function Imovel({ handleLogout }) {
   };
 
   const filtro_publico = [
+    //opções do filtro. pego do material ui
     { title: "Feminino" },
     { title: "Masculino" },
     { title: "Familiar" },
@@ -97,50 +103,52 @@ export default function Imovel({ handleLogout }) {
 
   const filterOptions = createFilterOptions({
     matchFrom: "start",
-    stringify: (option) => option.title,
+    stringify: (option) => option.title, //filtra as opções de imóvel
   });
 
   useEffect(() => {
+    //cada vez que a tela é carregada, carrega os imoveis cadatrados
     buscarImovel();
   }, []);
 
   const buscarImovel = async () => {
+    //exibe todos os imoveis cadastrados
     try {
       const request = await axios.get("http://localhost:3002/imovel/" + cpf);
       setImovel(request.data);
-      console.log("resposta:", request); // Debug
-      console.log("dados:", request.data); // Debug
+      console.log("Exibindo imóveis");
     } catch (error) {
       console.log(error);
     }
   };
 
   function criandoImoveis() {
+    //adiciona novos imóveis
     try {
       navigate("/imovel/", {
-        state: { cpf, number: 1, alerta: "Imóvel cadastrado com sucesso!" },
+        state: { cpf, number: 1, alerta: "Imóvel cadastrado com sucesso!" }, //vai para outra tela
       });
-      console.log("mimi");
-      console.log(cpf);
+      console.log("Imóvel adicionado");
     } catch {
       console.log("Falha no botão de criação de imóvel");
     }
   }
 
   function detalhandoImoveis(imovel_detalhar) {
+    //mostra todas as informações do imóvel
     try {
       navigate(`/imovel/${imovel_detalhar.locador_cpf}/${imovel_detalhar.id}`, {
         state: { imovel_detalhar, cpf },
-      });
-      console.log("toto");
-      console.log(cpf);
+      }); //vai para outra tela
+      console.log("Exibindo todas as informações do imóvel");
     } catch {
       console.log("Falha no botão de detalhação de imóvel");
     }
   }
 
   const imoveisFiltrados = useMemo(() => {
-    let resultado = imovel;
+    //useMemo faz com que, conforme eu escrevo na berra de pesquisa, vai filtrando os imóveis, sem o cursor sair do foco
+    let resultado = imovel; //let pq pode mudar
 
     // Filtro por público
     if (selecaoFiltro) {
@@ -159,7 +167,7 @@ export default function Imovel({ handleLogout }) {
 
   return (
     <>
-      <AppBar
+      <AppBar //modelando barra verde
         position="static"
         sx={{
           backgroundColor: "#89c56eff",
@@ -167,11 +175,13 @@ export default function Imovel({ handleLogout }) {
           width: "100%",
         }}
       >
+        {/*nome do sistema*/}
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <Typography variant="h4" sx={{ fontWeight: "bold" }}>
             Sua casa, sua vida
           </Typography>
 
+          {/*filtro*/}
           <Box sx={{ mx: 3 }}>
             <Autocomplete
               options={filtro_publico}
@@ -179,12 +189,15 @@ export default function Imovel({ handleLogout }) {
               filterOptions={filterOptions}
               sx={{ width: 300 }}
               value={
+                //filtrando o que foi selecionado
                 filtro_publico.find((event) => event.title === selecaoFiltro) ||
                 null
               }
               onChange={(event, newValue) => {
+                //event fica por ser assinatura padrão
                 setSelecaoFiltro(newValue ? newValue.title : "");
               }}
+              //modelando o design do filtro
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -204,6 +217,7 @@ export default function Imovel({ handleLogout }) {
             />
           </Box>
 
+          {/*barra de pesquisa, inserção da palavra*/}
           <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
             <Search>
               <SearchIconWrapper>
@@ -218,6 +232,7 @@ export default function Imovel({ handleLogout }) {
             </Search>
           </Box>
 
+          {/*botão para adicionar Imóvel*/}
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Button
               variant="outlined"
@@ -227,16 +242,11 @@ export default function Imovel({ handleLogout }) {
             >
               Adicionar Imóvel
             </Button>
-
-            <Button variant="outlined" color="error" onClick={handleLogout}>
-              Sair
-            </Button>
           </Box>
         </Toolbar>
       </AppBar>
-      {/*Lista de Imóveis*/}
 
-      {/* Lista de imóveis */}
+      {/* Lista de imóveis todos*/}
       {!imoveisFiltrados || imoveisFiltrados.length === 0 ? (
         <Typography variant="h6" sx={{ mt: 3, textAlign: "center" }}>
           {imovel.length === 0
@@ -244,6 +254,7 @@ export default function Imovel({ handleLogout }) {
             : "Nenhum imóvel encontrado com o filtro aplicado"}
         </Typography>
       ) : (
+        //cartão para aparecer as informações dos imoveis
         <Box sx={{ p: 2, display: "flex", gap: 2, flexWrap: "wrap" }}>
           {imoveisFiltrados.map((item) => (
             <Card key={item.id} sx={{ width: 300 }}>

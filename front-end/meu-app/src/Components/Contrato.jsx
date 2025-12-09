@@ -456,7 +456,7 @@ export default function Contrato({ tipoUsuario }) {
                     </Box>
 
                     <Typography variant="h4" component="h2" sx={{ fontWeight: 'bold', mb: 3 }}>
-                        Detalhes do Contrato #{contratoSelecionado.id}
+                        Contratos de {contratoSelecionado.Unidade_moradia?.nome_um}
                     </Typography>
 
                     <Box sx={{ p: 3, border: '1px solid #e0e0e0', borderRadius: 2, mb: 3 }}>

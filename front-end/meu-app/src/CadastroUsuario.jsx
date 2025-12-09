@@ -1,3 +1,4 @@
+//atua no cadstro do usuário
 import axios from "axios";
 import {
   Box,
@@ -5,12 +6,12 @@ import {
   Select,
   MenuItem,
   Button,
-  InputLabel,
   FormControl,
+  InputLabel,
 } from "@mui/material";
 import { useState } from "react";
 
-export default function CadastroUsuario({ opcao, voltar }) {
+export default function CadastroUsuario({ opcao, onClick }) {
   const [nome, setNome] = useState("");
   const [cpf, setCPF] = useState("");
   const [dataNascimento, setDataNascimento] = useState("");
@@ -20,6 +21,7 @@ export default function CadastroUsuario({ opcao, voltar }) {
   const [estuda, setEstuda] = useState("");
 
   function cancelarCadastro() {
+    //limpa os campos
     setNome("");
     setCPF("");
     setDataNascimento("");
@@ -27,10 +29,11 @@ export default function CadastroUsuario({ opcao, voltar }) {
     setTrabalha("");
     setEstuda("");
     setGenero("");
-    voltar();
+    if (onClick) onClick(); //para voltar para a tela login
   }
 
   const enviarCadastro = async () => {
+    //realiza o cadstro do usuário
     try {
       await axios.post("http://localhost:3002/novoUsuario", {
         nome,
@@ -43,17 +46,15 @@ export default function CadastroUsuario({ opcao, voltar }) {
         opcao,
       });
       console.log("Usuário cadastrado com sucesso!");
-      voltar();
-
-      // Recarrega a página para voltar ao login
+      if (onClick) onClick(); //para voltar para a tela login
     } catch (error) {
+      //em caso de erro
       console.error("Erro ao cadastrar usuário:", error);
     }
   };
 
-  return opcao == "locador" ? (
-    <Box
-      //component="form"
+  return opcao == "locador" ? ( //se opcao foi marcada como locador
+    <Box //design do Material UI das caixinhas de resposta
       sx={{ "& .MuiTextField-root": { m: 1, width: "25ch" } }}
       noValidate
       autoComplete="off"
@@ -82,18 +83,21 @@ export default function CadastroUsuario({ opcao, voltar }) {
           id="outlined-required"
           label="Data de Nascimento"
           type="date"
+          //abaixo é o formato para colocar a data, de forma que dd/mm/aaaa não fique embolado com Data de Nascimento na legenda da caixinha
+          slotProps={{
+            inputLabel: {
+              shrink: true,
+            },
+          }}
           value={dataNascimento}
           onChange={(event) => {
             setDataNascimento(event.target.value);
-          }}
-          InputLabelProps={{
-            shrink: true,
           }}
         />
         <TextField
           required
           id="outlined-required"
-          type="password" //mudei
+          type="password" //assim para ao colocar a senha não aparecer o que a pessoa escreveu
           label="Senha"
           value={senha}
           onChange={(event) => {
@@ -103,8 +107,9 @@ export default function CadastroUsuario({ opcao, voltar }) {
       </form>
       <Button
         variant="contained"
-        onClick={enviarCadastro}
+        onClick={enviarCadastro} //envia os dados para enviaCadastro
         disabled={
+          //se alguma das caixinhas está vazia, o usuário não pode clicar para prosseguir
           nome === "" || cpf === "" || dataNascimento === "" || senha === ""
         }
       >
@@ -117,14 +122,14 @@ export default function CadastroUsuario({ opcao, voltar }) {
           minWidth: "100px",
         }}
         color="error"
-        onClick={cancelarCadastro}
+        onClick={cancelarCadastro} //envia os dados para cancelarCadastro
       >
         Cancelar
       </Button>
     </Box>
   ) : (
-    <Box
-      //component="form"
+    //se opcao é um inquilino
+    <Box //design das caixinhas de resposta do Material UI
       sx={{ "& .MuiTextField-root": { m: 1, width: "25ch" } }}
       noValidate
       autoComplete="off"
@@ -152,13 +157,16 @@ export default function CadastroUsuario({ opcao, voltar }) {
           required
           id="outlined-required"
           label="Data de Nascimento"
+          slotProps={{
+            //abaixo é o formato para colocar a data, de forma que dd/mm/aaaa não fique embolado com Data de Nascimento na legenda da caixinha
+            inputLabel: {
+              shrink: true,
+            },
+          }}
           value={dataNascimento}
           type="date"
           onChange={(event) => {
             setDataNascimento(event.target.value);
-          }}
-          InputLabelProps={{
-            shrink: true,
           }}
         />
         <p>
@@ -183,6 +191,7 @@ export default function CadastroUsuario({ opcao, voltar }) {
             setGenero(event.target.value);
           }}
         />
+        {/*abaixo há as caixinhas, que ao serem clicadas, o usuário escolhe uma resposta - sim ou não. Os formatos foram pegos do Material UI*/}
         <FormControl sx={{ m: 1, minWidth: 120 }}>
           <InputLabel id="demo-simple-select-label">Trabalha *</InputLabel>
           <Select
@@ -192,7 +201,7 @@ export default function CadastroUsuario({ opcao, voltar }) {
             label="Trabalha"
             onChange={(event) => {
               setTrabalha(event.target.value);
-            }}
+            }} //formato pego do modelo do Material
           >
             <MenuItem value={true}>Sim</MenuItem>
             <MenuItem value={false}>Não</MenuItem>

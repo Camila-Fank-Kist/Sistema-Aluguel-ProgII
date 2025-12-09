@@ -321,11 +321,15 @@ export default function UnidadeMoradia({ tipoUsuario }) {
                                 onChange={(e) => setFiltroIdCategoria(e.target.value)}
                             >
                                 <MenuItem value="">Todas</MenuItem>
-                                {categorias.map((categoria) => (
-                                    <MenuItem key={categoria.id} value={categoria.id}>
-                                        {categoria.nome ?? categoria.categoria_da_um}
-                                    </MenuItem>
-                                ))}
+                                {categorias.map((cat) => {
+                                        const cid = cat.id ?? cat.id_categoria_um;
+                                        const label = cat.nome ?? cat.categoria_da_um ?? cat.categoria;
+                                        return (
+                                            <MenuItem key={cid} value={cid}>
+                                                {label}
+                                            </MenuItem>
+                                        );
+                                    })}
                             </Select>
                         </FormControl>
 
@@ -701,11 +705,15 @@ export default function UnidadeMoradia({ tipoUsuario }) {
                                     onChange={(e) => setId_categoria_um__unidade(e.target.value)}
                                 >
                                     <MenuItem value="">Nenhuma</MenuItem>
-                                    {categorias.map((cat) => (
-                                        <MenuItem key={cat.id} value={cat.id}>
-                                            {cat.nome}
-                                        </MenuItem>
-                                    ))}
+                                    {categorias.map((cat) => {
+                                        const cid = cat.id ?? cat.id_categoria_um;
+                                        const label = cat.nome ?? cat.categoria_da_um ?? cat.categoria;
+                                        return (
+                                            <MenuItem key={cid} value={cid}>
+                                                {label}
+                                            </MenuItem>
+                                        );
+                                    })}
                                 </Select>
                             </FormControl>
 

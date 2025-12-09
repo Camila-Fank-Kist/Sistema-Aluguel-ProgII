@@ -334,10 +334,6 @@ export default function SalvarImovel({ handleLogout }) {
             >
               Adicionar Imóvel
             </Button>
-
-            <Button variant="outlined" color="error" onClick={handleLogout}>
-              Sair
-            </Button>
           </Box>
         </Toolbar>
       </AppBar>

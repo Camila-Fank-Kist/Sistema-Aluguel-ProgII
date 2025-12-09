@@ -1,10 +1,11 @@
 const model = require("../models");
 
-const listarContratosDoLocador = async (locador_cpf, filtros) => {  
+const listarContratosDoLocador = async (locador_cpf, filtros) => {
   return await model.Contrato.findAll({
     where: filtros, // "WHERE" do banco de dados => filtros que vão ser aplicados na tabela Contrato
     // os atributos do objeto "filtros", que vão para o where, devem ter o mesmo nome das colunas do modelo (model.Contrato)
-    include: [ // "JOIN" do banco de dados
+    include: [
+      // "JOIN" do banco de dados
       {
         model: model.Unidade_moradia,
         as: "Unidade_moradia", // defini pois vinha com um nome estranho (m no final)
@@ -19,13 +20,13 @@ const listarContratosDoLocador = async (locador_cpf, filtros) => {
             model: model.Imovel,
             // required: true, // como tem um where nesse include, o Sequelize automaticamente assume "required: true", ntão não precisa colocar explicitamente
             where: {
-              locador_cpf: locador_cpf
-            } // precisa obrigatoriamente ter {} no where
-          }
-        ]
-      }
+              locador_cpf: locador_cpf,
+            }, // precisa obrigatoriamente ter {} no where
+          },
+        ],
+      },
     ],
-    order: [['data_inicio', 'DESC']],
+    order: [["data_inicio", "DESC"]],
   });
 };
 
@@ -33,15 +34,16 @@ const listarContratosDoInquilino = async (inquilino_cpf, filtros) => {
   return await model.Contrato.findAll({
     where: {
       ...filtros,
-      inquilino_cpf
+      inquilino_cpf,
     },
-    include: [ // pra mostrar o nome da unidade de moradia
+    include: [
+      // pra mostrar o nome da unidade de moradia
       {
         model: model.Unidade_moradia,
         as: "Unidade_moradia",
-      }
+      },
     ],
-    order: [['data_inicio', 'DESC']],
+    order: [["data_inicio", "DESC"]],
   });
 };
 
@@ -101,7 +103,7 @@ const listarContratosDaUnidade = async (id_um) => {
   try {
     return await model.Contrato.findAll({
       where: { id_um: id_um },
-      order: [['data_inicio', 'DESC']],
+      order: [["data_inicio", "DESC"]],
     });
   } catch (error) {
     throw error;
